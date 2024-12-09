@@ -139,3 +139,34 @@ html,body{
     top: -150px;
   }
 }
+
+
+
+/* .Eclips{
+  animation : rotateFull 10s linear infinite;
+}
+.Logo{
+  animation : rotateFullOp 10s linear infinite;
+}
+
+@keyframes rotateFullOp{
+  to{
+    transform : rotate(-360deg);
+  }
+}
+@keyframes rotateFull{
+  to{
+    transform : rotate(360deg);
+  }
+} */
+
+.onTopImg:hover .logoImgAtTop{
+  top : 0;
+  transition : cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-duration : 1500ms;
+}
+.onTopImg:hover .onTop{
+  height : 650px;
+  transition : cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-duration : 1500ms;
+}
