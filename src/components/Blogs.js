@@ -3,99 +3,84 @@ import Image from 'next/image'
 import Link from 'next/link'
 const Blogs = ()=>{
     return (
-        <div className="w-full h-[90%]  relative rounded-2xl flex justify-center items-center">
-            {/* Footer div*/}
-            <div className="w-full relative bg-black">
-                {/* Logo & Navigations & Social Links */}
-                <div className="w-full relative grid grid-cols-1 gap-10 md:grid-cols-4 md:gap-0 md:mt-[80px] md:mb-[66px]">
-                    {/* Logo Container Div */}
-                    <div className="w-full relative flex justify-center items-center bg-rose-300 lg:items-start xl:justify-start">
-                        <Image
-                        src={'/footerLogo.png'}
-                        width={150}
-                        height={40}
-                        alt="footer Logo"
-                        style={{
-                            objectFit : "contain"
-                        }}
-                        />
+        <div className="w-full h-[90%]  relative rounded-2xl  bg-teal-300">
+            
+            {/* Hero Section */}
+            <section className="w-full relative flex flex-col gap-6">
+                {/* Health Logo */}
+                <div className="w-full relative">
+                    <div className="w-[91px] h-[32px] rounded-[54px] bg-[#E6F8EF] flex justify-center items-center text-base font-medium text-[#15C06E]">Health</div>
+                </div>
+                {/* Heading TextContainer */}
+                <div className="w-full relative">
+                    <h1 className="text-[26px] font-medium text-[#222222]">
+                    Top Healthy And Nutritious Diwali Snacks This 2023
+                    </h1>
+                </div>
+                {/* Profile audio summary dates and Social Icons  */}
+                <div className="w-full relative grid gap-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                    {/* Profile Container */}
+                    <div className="w-full relative flex gap-6">
+                        {/* profile */}
+                        {[{pic:"url",profileName:"Cody Fisher",profileStatus:"Written by:"},{pic:"url",profileName:"Martina Cody",profileStatus:"Researched by:"}].map((profile,profileIdx)=>{
+                            return <div key={`${profileIdx}profile`} className="h-[41px] relative flex gap-2">
+                                        <div className="size-[41px] rounded-full bg-white"></div>
+                                        <div className="flex flex-col justify-center">
+                                            <p className="text-[10px] text-[#999999]">{profile.profileStatus}</p>
+                                            <p className="text-xs text-[#999999]">{profile.profileName}</p>
+                                        </div>
+                                    </div>
+                        })}
+                    </div>
+                    {/* Audio Summary Container */}
+                    <div className="hidden 2xl:flex max-w-[413px] h-[40px] relative border-[1px] rounded-[20px] border-[#15C06E]">
+
+                    </div>
+                    {/* Publish Date, Time and Views */}
+                    <div className="w-full relative flex justify-between">
+                        {[{logo:"/insta.png",content:"03 Aug 2023"},{logo:"/insta.png",content:"15 min Read"},,{logo:"/insta.png",content:"458 Views"}].map((published,publishedIdx)=>{
+                            return <div key={`${publishedIdx}published`} className="flex gap-2 items-center">
+                            <Image
+                            src={published.logo}
+                            alt="calendar"
+                            width={24}
+                            height={24}
+                            />
+                            <p className="text-xs text-[#666666]">{published.content}</p>
+                        </div>
+                        })}
                     </div>
 
-                    {/* Social Icons and Navigation Links Container */}
-                    <div className="w-full relative flex flex-col items-center gap-10 lg:gap-0 md:col-start-2 md:col-end-5 bg-green-300 lg:grid lg:grid-cols-3 ">
-                        {/* Social Icon Container */}
-                        <div className="w-full relative flex gap-8 lg:gap-4 lg:flex-wrap justify-center items-center lg:items-start lg:col-start-3 bg-blue-300 lg:absolute lg:place-self-start xl:justify-end">
-                            {
-                                [{logo:'/insta.png',slug:'/instagram.com'},{logo:'/insta.png',slug:'/instagram.com'},{logo:'/insta.png',slug:'/instagram.com'},{logo:'/insta.png',slug:'/instagram.com'},{logo:'/insta.png',slug:'/instagram.com'}].map((socialIcon,idx)=>{
-                                    return (
-                                        <div key={idx} className="min-w-[48px] min-h-[48px] rounded-full bg-[#666666] relative flex justify-center items-center">
-                                            <Image
-                                            src={socialIcon.logo}
-                                            width={24}
-                                            height={24}
-                                            alt="Social Icon"
-                                            />
-                                        </div>
-                                    )
-                                })
-                            }
+                    {/* Social Icons Container */}
+                    <div className="w-full relative flex gap-3">
+                        <h1>Share On:</h1>
+                        <div className="flex gap-[6px]">
+                            {[{iconLogo:"/whatsapp.png"},{iconLogo:"/whatsapp.png"},{iconLogo:"/whatsapp.png"},{iconLogo:"/whatsapp.png"},{iconLogo:"/whatsapp.png"}].map((socialIcon,iconIdx)=>{
+                                return <div key={`${iconIdx}iconIdx`} className="size-[24px] relative rounded-full">
+                                    <Image 
+                                    src={socialIcon.iconLogo}
+                                    fill
+                                    alt="social Icon"
+                                    sizes="(max-width:768px) 50px, (max-width:1280px) 100px, 33px"
+                                    />
+                                </div>
+                            })}
                         </div>
-
-                        {/* Navigation Link Container */}
-                        <div className="w-full  relative grid grid-cols-3 lg:col-start-1 lg:col-end-3 bg-red-300">
-                            {/* Routing Container */}
-                            <div className="flex flex-col gap-4 items-center">
-                                {[{route:"Home",slug:"/Home"},{route:"About Us",slug:"/AboutUs"},{route:"Career",slug:"/Career"},{route:"Contact",slug:"/Contact"},{route:"Blogs",slug:"/Blogs"},{route:"Media",slug:"/Media"}].map((router,routeIdx)=>{
-                                    return (
-                                        <Link key={routeIdx} href={router.slug}>
-                                            <li className="text-sm text-[#999999] list-none text-nowrap">{router.route}</li>
-                                        </Link>
-                                    )
-                                })}
-                            </div>
-                            {/* Privacey police Container */}
-                            <div className="flex flex-col gap-4 items-center">
-                                {[{route:"Privacy Policy",slug:"/Home"},{route:"Terms & Conditions",slug:"/Home"},{route:"Legal Disclaimer",slug:"/Home"}].map((router,routeIdx)=>{
-                                    return (
-                                        <Link key={routeIdx} href={router.slug}>
-                                            <li className="text-sm text-[#999999] list-none text-nowrap">{router.route}</li>
-                                        </Link>
-                                    )
-                                })}
-                            </div>
-                            {/* Brands Container */}
-                            <div className="flex flex-col gap-4 items-center">
-                                {[{route:"ToneOp Fit",slug:"/ToneOpFit"},{route:"ToneOp Care",slug:"/ToneOpCare"},{route:"ToneOp Eats",slug:"/ToneOpEats"}].map((router,routeIdx)=>{
-                                    return (
-                                        <Link key={routeIdx} href={router.slug}>
-                                            <li className="text-sm text-[#999999] list-none text-nowrap">{router.route}</li>
-                                        </Link>
-                                    )
-                                })}
-                            </div>
-                        </div>    
                     </div>
                 </div>
-                    {/* Address and Copy right Container */}
-                    <div className="w-full relative">
-                            {/* Address Container div */}
-                            <div>
-                                <p className="text-sm text-[#999999] text-center"><span className="text-sm font-medium text-white">Address:</span>
-                                ToneOp, Bansal Tech Professionals Private Limited, 3rd Floor, Tawa Complex, Bittan Market E-5, Arera Colony, Bhopal Madhya Pradesh, 462016
-                                </p>
-                            </div>
-                            <hr className="md:my[32px]"/>
-                            {/* Copy right Container */}
-                            <div className="w-full relative">
-                                <p className="text-sm text-[#666666] text-center">
-                                ©ToneOp 2024 - All rights reserved.
-                                </p>
-                            </div>
+                {/* Banner Container */}
+                <div className="w-full relative flex justify-center">
+                    {/* Banner Image Container */}
+                    <div className="w-[382px] h-[231px] relative">
+                        <Image
+                        src={"/blogImg.jpeg"}
+                        alt="Blogs Image"
+                        fill
+                        sizes="(max-width:768px) 100vw (max-width:1280px) 50vw,33vw"
+                        />
                     </div>
-
-            </div>
-
-
+                </div>
+            </section>
         </div>
     )
 }
