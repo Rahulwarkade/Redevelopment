@@ -1,11 +1,11 @@
 import React from 'react'
-import JobCard from '@/components/JobCard.js';
+import Touch from '@/components/Touch.js';
 
 export default function Dev(){
     return (
         <>
-            <section className="w-full h-screen  bg-gradient-to-r from-[#EFCAA7] to-[#8DABD1] flex justify-center items-center">
-                <JobCard/>
+            <section className="w-full h-screen flex items-center">
+                <Touch/>
             </section>
         </>
     )
