@@ -1,11 +1,11 @@
 import React from 'react'
-import Touch from '@/components/Touch.js';
+import ChatBot from '@/components/ChatBot.jsx';
 
 export default function Dev(){
     return (
         <>
-            <section className="w-full h-screen flex items-center">
-                <Touch/>
+            <section className="w-full h-screen flex items-center justify-center">
+                <ChatBot/>
             </section>
         </>
     )
