@@ -1,12 +1,11 @@
 import React from 'react'
 import ChatBot from '@/components/ChatBot.jsx';
+import {Campaign} from '@/components/Campaign.jsx';
 
 export default function Dev(){
     return (
         <>
-            <section className="w-full h-screen flex items-center justify-center">
-                <ChatBot/>
-            </section>
+                <Campaign/>
         </>
     )
 }
