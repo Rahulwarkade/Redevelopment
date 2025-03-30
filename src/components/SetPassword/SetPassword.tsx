@@ -10,7 +10,7 @@ import {
 } from "@/assets/Images";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
-import Link from "next/link";
+
 interface FormData {
   name: string;
   number: string;
@@ -28,11 +28,6 @@ const CodeVerification: React.FC = () => {
   } = useForm<FormData>();
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
-  };
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!/[\d]/.test(e.key)) {
-      e.preventDefault();
-    }
   };
 
   function validatePassword(password: string) {

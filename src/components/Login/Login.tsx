@@ -29,11 +29,6 @@ const Login: React.FC = () => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!/[\d]/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   function validatePassword(password: string) {
     // // Check for length of at least 8 characters
@@ -216,10 +211,9 @@ const Login: React.FC = () => {
                       Create account
                     </Button>
                     <Text className="w-full relative text-center text-sm text-black_313131 font-medium">
-                      Dono't have an account?
+                      Dono&apos;t have an account?
                       <Link href={"/"} className="text-red_ff8682">
-                        {" "}
-                        Sign up
+                        {" "} Sign up
                       </Link>
                     </Text>
                   </Container>

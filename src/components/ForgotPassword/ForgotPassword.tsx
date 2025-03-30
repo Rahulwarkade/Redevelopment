@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button, Container, Image, Input, Text } from "@/components";
 import {
   ForgotPasswordImg,
@@ -10,7 +10,7 @@ import {
 } from "@/assets/Images";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
-import Link from "next/link";
+
 interface FormData {
   name: string;
   number: string;
@@ -18,7 +18,6 @@ interface FormData {
   password: string;
 }
 const ForgotPassword: React.FC = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,14 +25,6 @@ const ForgotPassword: React.FC = () => {
     setError,
     reset,
   } = useForm<FormData>();
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!/[\d]/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   function validatePassword(password: string) {
     // // Check for length of at least 8 characters

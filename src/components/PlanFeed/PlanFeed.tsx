@@ -1,12 +1,12 @@
 import React from "react"
-import { Container, Text, Button, Input, Image } from "@/components";
+import { Container, Text, Button, Image } from "@/components";
 import { Icons } from "@/assets/icons";
 const PlanFeed = ({
   planDetails,
   isPro,
 }: {
   planDetails: {
-    planIcon: any;
+    planIcon: string;
     planName: string;
     Subscription: string;
     SubscriptionDuration: string;
@@ -109,7 +109,7 @@ const PlanFeed = ({
             isPro ? "text-white" : "text-[#170F49]"
           } `}
         >
-          Whats's included
+          Whats&apos;s included
         </Text>
       </Container>
 

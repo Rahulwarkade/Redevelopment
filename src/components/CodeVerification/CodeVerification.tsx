@@ -29,11 +29,6 @@ const CodeVerification: React.FC = () => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!/[\d]/.test(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   function validatePassword(password: string) {
     // // Check for length of at least 8 characters
@@ -125,7 +120,7 @@ const CodeVerification: React.FC = () => {
                   Verify code
                 </Text>
                 <Text className="text-sm md:text-base  text-black_313131 text-start">
-                An authentication code has been sent to your email.
+                Don&apos;t worry, happens to all of us. Enter your email below to recover your password
                 </Text>
               </Container>
               <form
@@ -171,7 +166,7 @@ const CodeVerification: React.FC = () => {
 
                   <Container className="w-full relative flex gap-2 mt-3 md:mt-6">
                     <Text className="text-sm text-black_313131 font-medium">
-                      Didn't recieve a code?
+                      Didn&apos;t recieve a code?
                       <Link href={"/"} className="text-red_ff8682">
                         {" "}Resend{" "}
                       </Link>

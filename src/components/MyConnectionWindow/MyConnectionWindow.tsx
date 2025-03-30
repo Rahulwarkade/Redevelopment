@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Text, Button, Input, Image } from "@/components";
+import { Container, Text, Button, Image } from "@/components";
 import { ProfilePic } from "@/assets/Images";
 const MyConnectionWindow = () => {
 
