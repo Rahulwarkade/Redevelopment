@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  font-family: var(--font-dm-sans), sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@theme {
+  --color-white_fdfdff : #FDFDFF;
+  --color-gray_787878: #787878;
+  --color-gray_79747E : #79747E;
+  --color-gray_f9f9f9 : #F9F9F9;
+  --color-gray_878787 : #878787;
+  --color-gray_ebf0fb : #EBF0FB;
+  --color-gray_dedede : #DEDEDE;
+  --color-gray_c4c4c4 : #C4C4C4;
+  --color-gray_b9c1c1 : #B9C1E1;
+  --color-gray_eef2fd : #EEF2FD;
+  --color-grey_e1e2ff : #E1E2FF;
+  --color-grey_92929d : #92929D;
+  --color-grey_bdbdbd : #BDBDBD;
+  --color-grey_a1a1a1 : #A1A1A1;
+  --color-grey_f7f7fd : #F7F7FD;
+  --color-grey_dfdfdf : #DFDFDF;
+  --color-black_313131 : #313131;
+  --color-black_23262f : #23262F;
+  --color-black_27272e : #27272E;
+  --color-black_425466 : #425466;
+  --color-black_1C1B1F : #1C1B1F;
+  --color-black_828282 : #828282;
+  --color-black_c0c0c0 : #C0C0C0;
+  --color-black_000929 : #000929;
+  --color-black_333333 : #333333;
+  --color-blue_fffff2 : #515DEF;
+  --color-blue_primary : #515DEF;
+  --color-blue_6956e5 : #6956E5;
+  --color-blue_515def : #515DEF;
+  --color-blue_f7f7fd : #F7F7FD;
+  --color-blue_f2f2ff : #F2F2FF;
+  --color-blue_dfe0eb : #DFE0EB;
+  --color-blue_bababa : #BABABA;
+  --color-blue_7879f1 : #7879F1;
+  --color-blue_f7f7fd : #F7F7FD;
+  --color-blue_a5a6f6 : #A5A6F6;
+  --color-blue_5d5fef : #5D5FEF;
+  --color-blue_e1e2ff : #E1E2FF;
+  --color-red_ff8682 : #FF8682;
+  --color-red_f92521 : #F92521;
+  --color-green_66eb9f : #66CB9F;
+  --color-orange_fbb03b : #FBB03B;
+  --color-green_33b843 : #33B843;
+  --text-fs-16: 1rem;
+  --text-fs-20: 1.25rem;
+  --text-fs-24: 1.5rem;
+  --text-fs-32: 2rem;
+  --text-fs-60: 3.75rem;
+
+  --spacing-16: 1rem;
+  --spacing-24: 1.5rem;
+  --spacing-32: 2rem;
+  --spacing-40: 2.5rem;
+  --spacing-80: 5rem;
+
+}
