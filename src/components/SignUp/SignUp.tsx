@@ -1,18 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Image, Input, Text } from "@/components";
 import { signupIndicator, Logo } from "@/assets/Images";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { signUp } from "@/store/user/userAPI";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { setAuth } from "@/store/user/authSlice";
+
 interface FormData {
   name: string;
   number: string;
   email: string;
   password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
 }
 const SignUp: React.FC = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const router = useRouter();
+  const [isAggreeToTerms, setIsAgreeToTerms] = useState<boolean>(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -30,7 +41,6 @@ const SignUp: React.FC = () => {
   };
 
   function validatePassword(password: string) {
-    // // Check for length of at least 8 characters
     if (!/.{3,}/.test(password)) {
       setError("password", {
         type: "manual",
@@ -38,9 +48,6 @@ const SignUp: React.FC = () => {
       });
       return false;
     }
-
-    // Check for at least one digit
-
     if (!/\d/.test(password)) {
       setError("password", {
         type: "manual",
@@ -48,8 +55,6 @@ const SignUp: React.FC = () => {
       });
       return false;
     }
-
-    // Check for at least one lowercase letter
     if (!/[a-z]/.test(password)) {
       setError("password", {
         type: "manual",
@@ -57,8 +62,6 @@ const SignUp: React.FC = () => {
       });
       return false;
     }
-
-    // // Check for at least one uppercase letter
     if (!/[A-Z]/.test(password)) {
       setError("password", {
         type: "manual",
@@ -66,28 +69,68 @@ const SignUp: React.FC = () => {
       });
       return false;
     }
-
     return true;
   }
-  const handleFormSubmit = (data: FormData) => {
-    const errors = validatePassword(data?.password);
 
-    if (!errors) return;
-
+  const confirmPassword = (password: string, confirmPassword: string) => {
+    if (password !== confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Passwords do not match.",
+      });
+      return false;
+    }
+    return true;
+  };
+  const handleFormSubmit = async (data: FormData) => {
+    const isPasswordValid = validatePassword(data.password);
+    if (!isPasswordValid) return;
+    const isConfirm = confirmPassword(data.password, data.confirmPassword);
+    if (!isConfirm) return;
+    if (!isAggreeToTerms) {
+      toast.info("You must agree to the Terms and Privacy Policies to continue.");
+      return;
+    }
     try {
-      // Example Usage
-      //   setShowOtp(true);
+      const resultAction = await dispatch(
+        signUp({
+          username: data?.name,
+          email: data?.email,
+          phoneNumber: data?.number,
+          password: data?.password,
+          confirmPassword: data?.password,
+          agreeToTerms: true,
+        })
+      ).unwrap();
+
+      // Set token in cookies
+      if (resultAction?.token) {
+        dispatch(setAuth({ token: resultAction.token }));
+        document.cookie = `authToken=${resultAction.token}; path=/;`;
+      }
       reset();
-    } catch (error) {
-      console.log(error);
+      if(resultAction.success)
+      {
+        router.replace("/");
+      }
+
+    } catch (error: any) {
+      toast.error(error || "We couldn't create your account.");
     }
   };
+
+
   return (
     <>
       <section className="w-full relative md:grid grid-cols-5 gap-x-[100px]">
         {/* Image Container */}
         <Container className="hidden max-md:h-[300px] md:grid w-full relative col-span-2">
-          <Image src={signupIndicator.src} fill alt="signup" className="object-contain"/>
+          <Image
+            src={signupIndicator.src}
+            fill
+            alt="signup"
+            className="object-contain"
+          />
         </Container>
 
         {/* Sign Up Container and Logo*/}
@@ -95,7 +138,7 @@ const SignUp: React.FC = () => {
         <Container className="w-full relative col-span-3 flex flex-col">
           {/* Logo */}
           <Container className="w-full relative flex justify-center md:justify-end item-center">
-            <Image src={Logo.src} alt="logo" width={214} height={53}/>
+            <Image src={Logo.src} alt="logo" width={214} height={53} />
           </Container>
 
           {/* Signup Form Container */}
@@ -116,7 +159,7 @@ const SignUp: React.FC = () => {
             <form className="w-full " onSubmit={handleSubmit(handleFormSubmit)}>
               <Container className="w-full  flex flex-col gap-[40px]">
                 <Container className="w-full relative flex flex-col gap-6">
-                {/* Name Input Container */}
+                  {/* Name Input Container */}
                   <Input
                     placeholder="e.g. johndoe"
                     containerClassName="w-full relative flex flex-col h-[56px] before:content-['Username'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
@@ -161,7 +204,7 @@ const SignUp: React.FC = () => {
                     }
                     errorClassName="text-red-500 text-sm pl-6"
                   />
-                {/* Number Input */}
+                  {/* Number Input */}
                   <Input
                     placeholder="e.g. +91 98765 43210"
                     containerClassName="w-full relative flex flex-col h-[56px] before:content-['Phone_Number'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
@@ -223,10 +266,10 @@ const SignUp: React.FC = () => {
                       containerClassName="w-full relative flex flex-col h-[56px] before:content-['Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
                       className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def 
                         placeholder:text-xs md:placeholder:text-base ${
-                        errors.password
-                          ? "outline-red-500"
-                          : "outline-blue_515def"
-                      }`}
+                          errors.password
+                            ? "outline-red-500"
+                            : "outline-blue_515def"
+                        }`}
                       rightIcon={
                         <span
                           onClick={togglePasswordVisibility}
@@ -244,10 +287,10 @@ const SignUp: React.FC = () => {
                         </span>
                       }
                       maxLength={20}
-                      {...register("password", { required: true })}
+                      {...register("confirmPassword", { required: true })}
                       error={
-                        errors?.password?.message
-                          ? String(errors?.password?.message)
+                        errors?.confirmPassword?.message
+                          ? String(errors?.confirmPassword?.message)
                           : ""
                       }
                       errorClassName="text-red-500 text-sm pl-6"
@@ -255,25 +298,51 @@ const SignUp: React.FC = () => {
                   </Container>
                   {/* Terms and Privacy Policy Container */}
                   <Container className="w-full relative flex gap-2 mt-3 md:mt-6">
-                    <span className="w-[18px] h-[18px] rounded-sm border border-black_313131"></span>
+                    {/* Terms Checkbox */}
+                    <span
+                      className={`w-[18px] h-[18px] rounded-sm border border-black_313131 flex items-center justify-center cursor-pointer ${
+                        isAggreeToTerms ? "bg-green-300 border-none" : ""
+                      }`}
+                      onClick={() => setIsAgreeToTerms((prev) => !prev)}
+                      tabIndex={0}
+                      role="checkbox"
+                      aria-checked={isAggreeToTerms}
+                    >
+                      {isAggreeToTerms && (
+                        <svg
+                          width="11"
+                          height="10"
+                          viewBox="0 0 11 10"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1.11865 6.28566L3.28428 8.53566L9.78115 1.46423"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </span>
                     <Text className="text-sm text-black_313131 font-medium">
                       I agree to all the
                       <Link href={"/"} className="text-red_ff8682">
-                        {" "}Terms{" "}
+                        {" "}
+                        Terms{" "}
                       </Link>
                       and
                       <Link href={"/"} className="text-red_ff8682">
-                        {" "}Privacy Policies.
+                        {" "}
+                        Privacy Policies.
                       </Link>
                     </Text>
                   </Container>
-
                 </Container>
 
                 {/* Account Button */}
-                <Container
-                  className="w-full flex flex-col gap-4"
-                >
+                <Container className="w-full flex flex-col gap-4">
                   <Button
                     type="submit"
                     className="w-full h-full rounded-sm bg-[#515DEF] text-white text-sm font-semibold outline-none  cursor-pointer"
@@ -281,13 +350,13 @@ const SignUp: React.FC = () => {
                     Create account
                   </Button>
                   <Text className="w-full relative text-center text-sm text-black_313131 font-medium">
-                      Already have an account?
-                      <Link href={"/"} className="text-red_ff8682">
-                        {" "}Login
-                      </Link>
-                    </Text>
+                    Already have an account?
+                    <Link href={"/"} className="text-red_ff8682">
+                      {" "}
+                      Login
+                    </Link>
+                  </Text>
                 </Container>
-
               </Container>
             </form>
           </Container>

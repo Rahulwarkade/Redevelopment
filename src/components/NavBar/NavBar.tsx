@@ -102,9 +102,9 @@ const NavBar: React.FC = () => {
                     </Link>
                     <Link
                       href={"/set-password"}
-                      onClick={() => setActiveNav("set-password")}
+                      onClick={() => setActiveNav("reset-password")}
                     >
-                      <h3 className={`${activeNav == "set-password" ? "text-[#878787] font-semibold " : ""}hover:text-[#6956E5] hover:font-semibold text-nowrap transition duration-300 ease-out`}>
+                      <h3 className={`${activeNav == "reset-password" ? "text-[#878787] font-semibold " : ""}hover:text-[#6956E5] hover:font-semibold text-nowrap transition duration-300 ease-out`}>
                         Set Password
                       </h3>
                     </Link>

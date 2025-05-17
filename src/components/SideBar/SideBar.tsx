@@ -13,7 +13,7 @@ import {
   LougoutIcon,
 } from "@/assets/icons/svgIcons";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavBarType {
   isSidebar? : boolean;
@@ -22,6 +22,7 @@ interface NavBarType {
 }
 const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
   const pathname = usePathname();
+  const router = useRouter();
   const parts = pathname?.split("/");
   const url = `${parts[1]}`;
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -163,11 +164,17 @@ const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
                 href={route.routeSlug}
                 key={`${index}`}
                 className="flex gap-4 items-center"
-                onClick={() => {
-                  if(setIsSidebar)
-                  {
+                onClick={async (e) => {
+                  if(setIsSidebar) {
                     setIsSidebar(false)
                   }
+                    if(route.routeName == "Logout") {
+                    e.preventDefault();
+                    // Clear authToken from cookies
+                    const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString(); // 1 hour from now
+                    document.cookie = `authToken=; expires=${expires}; path=/;`;
+                    router.replace("/login");
+                    }
                 }}
               >
                 {route.routeIcon}

@@ -1,9 +1,12 @@
-import React from "react";
-import { Button, Container, FeedContent, Image, Text } from "@/components";
+'use client'
+import React, { useState } from "react";
+import { Button, Container, FeedContent, Image, Text, AddBanner } from "@/components";
 import { PetalBg, ModernWoman } from "@/assets/Images";
 import { FilterIcon, StarIcon } from "@/assets/icons/svgIcons";
 
 const FeedWindow: React.FC = () => {
+    const [showAddBanner, setShowAddBanner] = useState(false);
+
   return (
     <Container className="w-full relative flex flex-col gap-5 pb-5 md:pb-[100px]">
       {/* Header Container */}
@@ -46,15 +49,10 @@ const FeedWindow: React.FC = () => {
           </Container>
         </Container>
       </Container>
-
       {/* Filter Container */}
       <Container className="w-full relative flex justify-between items-center py-2.5 px-3 md:px-5 bg-gray_ebf0fb rounded-[5px]">
-        {/* Filter */}
         <Container className="w-fit flex gap-2.5 items-center">
-          <Text
-            variant="h3"
-            className="text-xs md:text-2xl font-semibold capitalize"
-          >
+          <Text variant="h3" className="text-xs md:text-2xl font-semibold capitalize">
             Filter
           </Text>
           <span className="rounded-full p-[6px] bg-white">
@@ -62,7 +60,6 @@ const FeedWindow: React.FC = () => {
           </span>
         </Container>
 
-        {/* Filter and Add New Banner Button */}
         <Container className="w-fit flex gap-4">
           <Button
             leftIcon={<FilterIcon strokeColor="#515DEF" className="relative" />}
@@ -70,7 +67,10 @@ const FeedWindow: React.FC = () => {
           >
             Filter
           </Button>
-          <Button className="py-[3px] md:py-[6px] px-3 md:px-6  rounded-[5px] bg-[#515def] text-white text-xs md:text-base font-semibold">
+          <Button
+            className="py-[3px] md:py-[6px] px-3 md:px-6 rounded-[5px] bg-[#515def] text-white text-xs md:text-base font-semibold"
+            onClick={() => setShowAddBanner(true)}
+          >
             Add New Banner
           </Button>
         </Container>
@@ -80,6 +80,22 @@ const FeedWindow: React.FC = () => {
       <Container className="w-full relative">
         <FeedContent />
       </Container>
+
+      {/* AddBanner Modal */}
+      {showAddBanner && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-[10px] p-6 max-w-[90%] w-[500px] relative">
+            <button
+              onClick={() => setShowAddBanner(false)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
+            >
+              &times;
+            </button>
+            <AddBanner />
+          </div>
+        </div>
+      )}
+
     </Container>
   );
 };

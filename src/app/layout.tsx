@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { dmSans } from "@/assets/fonts/font";
 import "./globals.css";
 import ReduxProvider from "@/store/provider";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Toneop Eats CRM",
@@ -18,6 +19,7 @@ const RootLayout = ({
       <body className={`antialiased`}>
         <ReduxProvider>
           {children}
+          <ToastContainer position="top-right" autoClose={3000} />
         </ReduxProvider>
       </body>
     </html>

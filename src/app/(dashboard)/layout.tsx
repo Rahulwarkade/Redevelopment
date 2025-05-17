@@ -1,16 +1,26 @@
-import type { Metadata } from "next";
+'use client';
 import { Container, NavBar, SideBar } from "@/components";
-
-export const metadata: Metadata = {
-  title: "Toneop Eats CRM",
-  description: "Toneop Eats CRM",
-};
+import { useEffect } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { getProfile } from "@/store/user/userAPI";
 
 const DashboardLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('authToken='))
+      ?.split('=')[1];
+    if (token) {
+      dispatch(getProfile(token));
+    }
+  }, [dispatch]);
+
   return (
     <>
       <section className="w-full min-h-screen relative md:px-[7%] md:py-[20px] flex lg:grid grid-cols-4 gap-[30px]

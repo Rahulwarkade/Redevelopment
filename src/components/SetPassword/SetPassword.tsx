@@ -10,28 +10,38 @@ import {
 } from "@/assets/Images";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "@/store/hooks";
+import { resetPassword } from "@/store/user/userAPI";
 
 interface FormData {
-  name: string;
-  number: string;
-  email: string;
+  otp: string;
   password: string;
+  confirmPassword: string;
 }
-const CodeVerification: React.FC = () => {
+
+interface ResetPasswordProps {
+  email: string;
+  otp: string;
+  setShowcomponent : any;
+}
+
+const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcomponent }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
     reset,
-  } = useForm<FormData>();
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+  } = useForm<Omit<FormData, "otp">>();
 
+  const togglePasswordVisibility = () => setIsPasswordVisible((v) => !v);
+  const toggleConfirmVisibility = () => setIsConfirmVisible((v) => !v);
   function validatePassword(password: string) {
-    // // Check for length of at least 8 characters
     if (!/.{3,}/.test(password)) {
       setError("password", {
         type: "manual",
@@ -39,9 +49,6 @@ const CodeVerification: React.FC = () => {
       });
       return false;
     }
-
-    // Check for at least one digit
-
     if (!/\d/.test(password)) {
       setError("password", {
         type: "manual",
@@ -49,8 +56,6 @@ const CodeVerification: React.FC = () => {
       });
       return false;
     }
-
-    // Check for at least one lowercase letter
     if (!/[a-z]/.test(password)) {
       setError("password", {
         type: "manual",
@@ -58,8 +63,6 @@ const CodeVerification: React.FC = () => {
       });
       return false;
     }
-
-    // // Check for at least one uppercase letter
     if (!/[A-Z]/.test(password)) {
       setError("password", {
         type: "manual",
@@ -67,22 +70,53 @@ const CodeVerification: React.FC = () => {
       });
       return false;
     }
-
     return true;
   }
-  const handleFormSubmit = (data: FormData) => {
-    const errors = validatePassword(data?.password);
-
-    if (!errors) return;
-
+  const confirmPassword = (password: string, confirmPassword: string) => {
+    if (password !== confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Passwords do not match.",
+      });
+      return false;
+    }
+    return true;
+  };
+  const handleFormSubmit = async (data: Omit<FormData, "otp">) => {
+    const isPasswordValid = validatePassword(data.password);
+    if (!isPasswordValid) return;
+    const isConfirm = confirmPassword(data.password, data.confirmPassword);
+    if (!isConfirm) return;
+    if (data.password.length < 8) {
+      setError("password", {
+        type: "manual",
+        message: "Password must be at least 8 characters.",
+      });
+      return;
+    }
+    if (data.password !== data.confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Passwords must match.",
+      });
+      return;
+    }
     try {
-      // Example Usage
-      //   setShowOtp(true);
-      reset();
-    } catch (error) {
-      console.log(error);
+      await dispatch(
+        resetPassword({
+          email,
+          otp,
+          password: data.password,
+          confirmPassword : data.confirmPassword
+        })
+      ).unwrap();
+      toast.success("Password reset successful! Please login.");
+      setShowcomponent(false);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to reset password.");
     }
   };
+
   return (
     <>
       <section className="w-full relative flex flex-col gap-4">
@@ -92,12 +126,10 @@ const CodeVerification: React.FC = () => {
             <Image src={Logo.src} alt="logo" width={214} height={53} />
           </span>
         </Container>
-        <section className="w-full relative flex  gap-5">
-          {/* Login Container and Logo*/}
+        <section className="w-full relative flex gap-5">
+          {/* Reset Password Container */}
           <Container className="w-full relative flex flex-col">
-            {/* Login Form Container */}
-            <Container className="w-full max-w-[512px] h-full relative  flex flex-col justify-center items-center ">
-              {/* Login Container */}
+            <Container className="w-full max-w-[512px] h-full relative flex flex-col justify-center items-center ">
               <Container className="w-full relative flex flex-col gap-4">
                 <Text
                   variant="h1"
@@ -105,20 +137,21 @@ const CodeVerification: React.FC = () => {
                 >
                   Set a password
                 </Text>
-                <Text className="text-sm md:text-base  text-black_313131 text-start">
-                Your previous password has been reseted. Please set a new password for your account.
+                <Text className="text-sm md:text-base text-black_313131 text-start">
+                  Your previous password has been reset. Please set a new
+                  password for your account.
                 </Text>
               </Container>
               <form
-                className="w-full "
+                className="w-full"
                 onSubmit={handleSubmit(handleFormSubmit)}
               >
-                <Container className="w-full  flex flex-col gap-[40px]">
+                <Container className="w-full flex flex-col gap-[40px]">
                   <Container className="w-full relative flex flex-col gap-6">
-                    {/* Email Input */}
+                    {/* New Password Input */}
                     <Input
-                      placeholder="e.g. 7789BM6X@@H&$K_"
-                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Enter_Code'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
+                      placeholder="New Password"
+                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
                       className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def placeholder:text-xs md:placeholder:text-base ${
                         errors.password
                           ? "outline-red-500"
@@ -141,7 +174,11 @@ const CodeVerification: React.FC = () => {
                         </span>
                       }
                       maxLength={20}
-                      {...register("password", { required: true })}
+                      type={isPasswordVisible ? "text" : "password"}
+                      {...register("password", {
+                        required: "Password is required",
+                        minLength: 8,
+                      })}
                       error={
                         errors?.password?.message
                           ? String(errors?.password?.message)
@@ -149,17 +186,18 @@ const CodeVerification: React.FC = () => {
                       }
                       errorClassName="text-red-500 text-sm pl-6"
                     />
+                    {/* Confirm Password Input */}
                     <Input
-                      placeholder="e.g. 7789BM6X@@H&$K_"
-                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Enter_Code'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
+                      placeholder="Re-enter Password"
+                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Confirm_Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
                       className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def placeholder:text-xs md:placeholder:text-base ${
-                        errors.password
+                        errors.confirmPassword
                           ? "outline-red-500"
                           : "outline-blue_515def"
                       }`}
                       rightIcon={
                         <span
-                          onClick={togglePasswordVisibility}
+                          onClick={toggleConfirmVisibility}
                           className="flex max-md:size-[12px]"
                         >
                           <Image
@@ -168,28 +206,29 @@ const CodeVerification: React.FC = () => {
                             height={20}
                             alt="View"
                           />
-                          {isPasswordVisible && (
+                          {isConfirmVisible && (
                             <span className="transition-all duration-300 ease-in-out w-full h-[1px] bg-black rounded-full absolute rotate-45 top-1/2 -translate-y-1/2"></span>
                           )}
                         </span>
                       }
                       maxLength={20}
-                      {...register("password", { required: true })}
+                      type={isConfirmVisible ? "text" : "password"}
+                      {...register("confirmPassword", {
+                        required: "Please re-enter your password",
+                      })}
                       error={
-                        errors?.password?.message
-                          ? String(errors?.password?.message)
+                        errors?.confirmPassword?.message
+                          ? String(errors?.confirmPassword?.message)
                           : ""
                       }
                       errorClassName="text-red-500 text-sm pl-6"
                     />
-
                   </Container>
-
                   {/* Account Button */}
                   <Container className="w-full flex ">
                     <Button
                       type="submit"
-                      className="w-full h-full rounded-sm bg-[#515DEF] text-white text-sm font-semibold outline-none  cursor-pointer"
+                      className="w-full h-full rounded-sm bg-[#515DEF] text-white text-sm font-semibold outline-none cursor-pointer"
                     >
                       Set password
                     </Button>
@@ -197,7 +236,6 @@ const CodeVerification: React.FC = () => {
                 </Container>
               </form>
             </Container>
-
             {/* Illustration Images Container */}
             <Container className="w-full max-md:max-w-[512px] min-h-[275px] relative flex justify-between items-end mt-10 md:translate-y-[40px]">
               {/* boy and Tree */}
@@ -219,7 +257,6 @@ const CodeVerification: React.FC = () => {
                   />
                 </Container>
               </Container>
-
               <Image
                 src={PlantIlustration.src}
                 width={113}
@@ -228,9 +265,8 @@ const CodeVerification: React.FC = () => {
               />
             </Container>
           </Container>
-
           {/* Image Container */}
-          <Container className="hidden  md:flex w-full h-fit relative  rounded-[30px]  items-center justify-center">
+          <Container className="hidden md:flex w-full h-fit relative rounded-[30px] items-center justify-center">
             <Image
               src={SetPasswordImg.src}
               width={616}
@@ -245,4 +281,4 @@ const CodeVerification: React.FC = () => {
   );
 };
 
-export default CodeVerification;
+export default ResetPassword;

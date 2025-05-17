@@ -23,5 +23,6 @@ export { default as NotificationWindow } from "./NotificationWindow/Notification
 export { default as ProfileWindow } from "./ProfileWindow/ProfileWindow";
 export { default as PlanFeed } from "./PlanFeed/PlanFeed";
 export { default as FeedWindow } from "./FeedWindow/FeedWindow";
+export { default as AddBanner } from "./AddBanner/AddBanner";
 // Re-export common components
 export * from "./common";

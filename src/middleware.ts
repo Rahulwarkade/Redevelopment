@@ -19,14 +19,13 @@ export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl;
 
   // Define public routes that don't require authentication
-  const publicRoutes = ["/demo","/signup","/login","/","forgot-password","/code-verification","/set-password","/job","/chat","/notification","/connection","/profile",
-  "/setting"];
+  const publicRoutes = ["/signup","/login"];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   // Check for auth token in cookies
-  const authToken = request.cookies.get("auth")?.value;
+  const authToken = request.cookies.get("authToken")?.value;
 
   // Authentication logic
   if (authToken) {
