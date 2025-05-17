@@ -23,7 +23,7 @@ interface FormData {
 interface ResetPasswordProps {
   email: string;
   otp: string;
-  setShowcomponent : any;
+  setShowcomponent: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcomponent }) => {
@@ -36,7 +36,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
     handleSubmit,
     formState: { errors },
     setError,
-    reset,
   } = useForm<Omit<FormData, "otp">>();
 
   const togglePasswordVisibility = () => setIsPasswordVisible((v) => !v);
@@ -112,7 +111,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
       ).unwrap();
       toast.success("Password reset successful! Please login.");
       setShowcomponent(false);
-    } catch (error: any) {
+    } catch (error : any) {
       toast.error(error?.message || "Failed to reset password.");
     }
   };

@@ -23,8 +23,8 @@ interface NavBarType {
 const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
   const pathname = usePathname();
   const router = useRouter();
-  const parts = pathname?.split("/");
-  const url = `${parts[1]}`;
+  const parts = pathname ? pathname.split("/") : [];
+  const url = `${parts[1] || ""}`;
   const [activeNav, setActiveNav] = useState("dashboard");
   useEffect(() => {
     if (url != "dashboard") {

@@ -4,9 +4,14 @@ import { Container, JobPost } from "@/components";
 import { useAppDispatch } from "@/store/hooks";
 import { getBanners } from "@/store/user/userAPI";
 
+type Banner = {
+  // Add only the fields you use in JobPost, or use 'any' as a last resort
+  [key: string]: unknown;
+};
+
 const FeedContent = () => {
   const dispatch = useAppDispatch();
-  const [banners, setBanners] = useState<any[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("authToken="))
@@ -24,7 +29,7 @@ const FeedContent = () => {
   return (
     <Container className="w-full relative grid md:grid-cols-2 xl:grid-cols-3 gap-6">
       {banners.map((banner, index) => (
-        <JobPost key={`feed-${index}`} banner={banner} />
+        <JobPost key={`feed-${index}`}  />
       ))}
     </Container>
   );

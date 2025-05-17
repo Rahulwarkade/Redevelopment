@@ -1,11 +1,10 @@
 'use client'
-import React, { useState } from "react";
-import { Button, Container, FeedContent, Image, Text, AddBanner } from "@/components";
+import React from "react";
+import { Button, Container, FeedContent, Image, Text } from "@/components";
 import { PetalBg, ModernWoman } from "@/assets/Images";
 import { FilterIcon, StarIcon } from "@/assets/icons/svgIcons";
 
 const FeedWindow: React.FC = () => {
-    const [showAddBanner, setShowAddBanner] = useState(false);
 
   return (
     <Container className="w-full relative flex flex-col gap-5 pb-5 md:pb-[100px]">
@@ -69,7 +68,6 @@ const FeedWindow: React.FC = () => {
           </Button>
           <Button
             className="py-[3px] md:py-[6px] px-3 md:px-6 rounded-[5px] bg-[#515def] text-white text-xs md:text-base font-semibold"
-            onClick={() => setShowAddBanner(true)}
           >
             Add New Banner
           </Button>
@@ -80,21 +78,6 @@ const FeedWindow: React.FC = () => {
       <Container className="w-full relative">
         <FeedContent />
       </Container>
-
-      {/* AddBanner Modal */}
-      {showAddBanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-[10px] p-6 max-w-[90%] w-[500px] relative">
-            <button
-              onClick={() => setShowAddBanner(false)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
-            >
-              &times;
-            </button>
-            <AddBanner />
-          </div>
-        </div>
-      )}
 
     </Container>
   );

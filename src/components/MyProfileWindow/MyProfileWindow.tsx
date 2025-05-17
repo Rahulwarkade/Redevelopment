@@ -1,10 +1,9 @@
-"use client"
-import React, {useState} from "react";
+"use client";
+import React, { useState } from "react";
 import { Container, Text, Button, Input, Image, PlanFeed } from "@/components";
 import { Icons } from "@/assets/icons";
 const MyProfileWindow = () => {
-
-  const [openTab,setOpenTab] = useState("information");
+  const [openTab, setOpenTab] = useState("information");
 
   {
     /* General Information Window */
@@ -252,28 +251,43 @@ const MyProfileWindow = () => {
       {/* General Information, Password and Billing */}
       <Container className="w-full relative flex h-[70px] border-b border-[#E1E2FF] ">
         {/* General Info */}
-        <Container className={`w-full h-full relative  flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${openTab=="information" ? "bg-[#515DEF] text-white" : ""}`} onClick={()=>setOpenTab("information")}>
+        <Container
+          className={`w-full h-full relative  flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${
+            openTab == "information" ? "bg-[#515DEF] text-white" : ""
+          }`}
+          onClick={() => setOpenTab("information")}
+        >
           <Text className="text-sm md:text-base lg:text-lg font-medium text-center">
             General Information
           </Text>
         </Container>
         {/* General Info */}
-        <Container className={`w-full h-full relative flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${openTab=="password" ? "bg-[#515DEF] text-white" : ""}`} onClick={()=>setOpenTab("password")}>
+        <Container
+          className={`w-full h-full relative flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${
+            openTab == "password" ? "bg-[#515DEF] text-white" : ""
+          }`}
+          onClick={() => setOpenTab("password")}
+        >
           <Text className="text-sm md:text-base lg:text-lg font-medium text-center">
             Change Password
           </Text>
         </Container>
         {/* General Info */}
-        <Container className={`w-full h-full relative flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${openTab=="payment" ? "bg-[#515DEF] text-white" : ""}`} onClick={()=>setOpenTab("payment")}>
+        <Container
+          className={`w-full h-full relative flex justify-center items-center border border-[#E1E2FF] cursor-pointer ${
+            openTab == "payment" ? "bg-[#515DEF] text-white" : ""
+          }`}
+          onClick={() => setOpenTab("payment")}
+        >
           <Text className="text-sm md:text-base lg:text-lg font-medium text-center">
             Billing & Payments
           </Text>
         </Container>
       </Container>
 
-      {openTab=="information" && <GeneralInformation />}
-      {openTab=="password" && <ChangePassword />}
-      {openTab=="payment" && <BillingAndPayments />}
+      {openTab == "information" && <GeneralInformation />}
+      {openTab == "password" && <ChangePassword />}
+      {openTab == "payment" && <BillingAndPayments />}
     </section>
   );
 };

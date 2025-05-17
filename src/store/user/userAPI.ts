@@ -79,8 +79,12 @@ export const signIn = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Sign in failed");
       }
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Sign in failed");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Sign in failed");
+      }
+      return rejectWithValue("Sign in failed");
     }
   }
 );
@@ -101,8 +105,12 @@ export const signUp = createAsyncThunk(
       return rejectWithValue(response.data?.message || "User could not be created. Please try again.");
     } 
     return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Sign up failed");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Sign up failed");
+      }
+      return rejectWithValue("Sign up failed");
     }
   }
 );
@@ -115,10 +123,12 @@ export const getProfile = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Get profile failed"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Get profile failed");
+      }
+      return rejectWithValue("Get profile failed");
     }
   }
 );
@@ -134,10 +144,12 @@ export const updateProfile = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Update profile failed"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Update profile failed");
+      }
+      return rejectWithValue("Update profile failed");
     }
   }
 );
@@ -152,10 +164,12 @@ export const signOut = createAsyncThunk(
         { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Sign out failed"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Sign out failed");
+      }
+      return rejectWithValue("Sign out failed");
     }
   }
 );
@@ -180,8 +194,12 @@ export const verifyOtp = createAsyncThunk(
         return rejectWithValue(response.data?.message || "OTP verification failed");
       }
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "OTP verification failed");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "OTP verification failed");
+      }
+      return rejectWithValue("OTP verification failed");
     }
   }
 );
@@ -208,10 +226,12 @@ export const addBanner = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Add banner failed");
       }
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Add banner failed"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Add banner failed");
+      }
+      return rejectWithValue("Add banner failed");
     }
   }
 );
@@ -230,10 +250,12 @@ export const getCategories = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Failed to fetch categories");
       }
       return response.data.categories; // Adjust if your API response structure is different
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch categories"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch categories");
+      }
+      return rejectWithValue("Failed to fetch categories");
     }
   }
 );
@@ -252,10 +274,12 @@ export const getTrafficUnits = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Failed to fetch traffic units");
       }
       return response.data.data; // Adjust if your API response structure is different
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch traffic units"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch traffic units");
+      }
+      return rejectWithValue("Failed to fetch traffic units");
     }
   }
 );
@@ -288,10 +312,12 @@ export const getBanners = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Failed to fetch banners");
       }
       return response.data.banners; // Adjust if your API response structure is different
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch banners"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch banners");
+      }
+      return rejectWithValue("Failed to fetch banners");
     }
   }
 );
@@ -301,8 +327,12 @@ export const forgotPassword = createAsyncThunk(
     try {
       const response = await axios.post("http://localhost:5001/api/auth/forgot-password", { email });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to send reset email");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Failed to send reset email");
+      }
+      return rejectWithValue("Failed to send reset email");
     }
   }
 );
@@ -324,10 +354,12 @@ export const resetPassword = createAsyncThunk(
         return rejectWithValue(response.data?.message || "Reset password failed");
       }
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Reset password failed"
-      );
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Reset password failed");
+      }
+      return rejectWithValue("Reset password failed");
     }
   }
 );

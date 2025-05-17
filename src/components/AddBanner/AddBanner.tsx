@@ -119,8 +119,12 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       ).unwrap();
       toast.success("Banner published successfully!");
       onClose();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to publish banner.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "message" in error) {
+        toast.error((error as { message?: string }).message || "Failed to publish banner.");
+      } else {
+        toast.error("Failed to publish banner.");
+      }
     }
   };
 
@@ -171,7 +175,6 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 label: cat.name,
                 value: cat._id,
               }))}
-              error={errors.category?.message}
               {...field}
             />
           )}
@@ -286,7 +289,7 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 label: unit.name,
                 value: unit._id,
               }))}
-              error={errors.trafficUnit?.message}
+              // error={errors.trafficUnit?.message}
               {...field}
             />
           )}
@@ -326,7 +329,7 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               label="Guest Post"
               checked={field.value}
               onChange={field.onChange}
-              error={errors.isGuestPost?.message}
+              // error={errors.isGuestPost?.message}
             />
           )}
         />
@@ -338,7 +341,7 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               label="Exchange Post"
               checked={field.value}
               onChange={field.onChange}
-              error={errors.isExchangePost?.message}
+              // error={errors.isExchangePost?.message}
             />
           )}
         />
@@ -350,7 +353,7 @@ const AddBanner: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               label="Public"
               checked={field.value}
               onChange={field.onChange}
-              error={errors.isPublic?.message}
+              // error={errors.isPublic?.message}
             />
           )}
         />

@@ -211,8 +211,6 @@ const NotificationWindow = () => {
           </Button>
         </Container>
       </Container>
-
-
     </Container>
   );
 };

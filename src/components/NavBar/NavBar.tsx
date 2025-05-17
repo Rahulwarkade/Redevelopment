@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
   const [isNavOpen,setIsNavOpen] = useState(false);
   const pathname = usePathname();
   const parts = pathname?.split("/");
-  const url = `${parts[1]}`;
+  const url = `${parts?.[1] ?? ""}`;
   const [activeNav, setActiveNav] = useState("dashboard");
   useEffect(() => {
     if (url != "") {

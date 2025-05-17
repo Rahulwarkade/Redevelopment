@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Container, Image, Input, Text } from "@/components";
 import { signupIndicator, Logo } from "@/assets/Images";
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { signUp } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -115,7 +115,7 @@ const SignUp: React.FC = () => {
       }
 
     } catch (error: any) {
-      toast.error(error || "We couldn't create your account.");
+      toast.error(error.message || "We couldn't create your account.");
     }
   };
 

@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Icons } from "@/assets/icons";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch, } from "@/store/hooks";
 import { forgotPassword, signIn, verifyOtp } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -42,7 +42,6 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setError,
-    reset,
     setValue,
     getValues,
   } = useForm<FormData & { otp: string }>();
@@ -101,11 +100,11 @@ const Login: React.FC = () => {
         toast.success("Login successful!");
         router.push("/");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Show backend error message
       const errorMsg =
-        error?.message ||
-        error?.toString() ||
+        (error as any)?.message ||
+        (error as any)?.toString() ||
         "OTP verification failed. Please try again.";
 
       toast.error(errorMsg);
@@ -141,8 +140,8 @@ const Login: React.FC = () => {
         setIsForgotPassword(true); // <-- Set forgot password state
         setValue("otp", "");
       }
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to send reset link.");
+    } catch (error: unknown) {
+      toast.error((error as any)?.message || "Failed to send reset link.");
     }
   };
   // Password/OTP form submit
@@ -166,8 +165,8 @@ const Login: React.FC = () => {
           setIsForgotPassword(false);
           setShowOtp(false);
         }
-      } catch (error: any) {
-        toast.error(error?.message || "Verification failed.");
+      } catch (error: unknown) {
+        toast.error((error as any)?.message || "Verification failed.");
       }
       return;
     }
@@ -190,9 +189,9 @@ const Login: React.FC = () => {
         setResendTimer(30);
         setCanResend(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(
-        error?.message || "Login failed. Please check your credentials."
+        (error as any)?.message || "Login failed. Please check your credentials."
       );
     }
   };
@@ -213,8 +212,9 @@ const Login: React.FC = () => {
       setCanResend(false);
       setOtpExpired(false);
       setValue("otp", "");
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to resend verification code.");
+    } catch (error: unknown) {
+      const errorMsg = (error as any)?.message || "Failed to resend verification code.";
+      toast.error(errorMsg);
     }
   };
 

@@ -3,6 +3,10 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "@reduxjs/toolkit";
 
+// Import reducers
+import demoReducer from "./slices/demoSlice";
+import apiDemoReducer from "./slices/apiDemoSlice";
+
 import userSlice from "./user/userSlice";
 import authSlice from "./user/authSlice";
 
@@ -10,10 +14,12 @@ import authSlice from "./user/authSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Add slices you want to persist
+  whitelist: ["demo","auth"], // Add slices you want to persist
 };
 
 const rootReducer = combineReducers({
+  demo: demoReducer,
+  apiDemo: apiDemoReducer,
   auth: authSlice,
   user: userSlice,
   // Add more reducers here

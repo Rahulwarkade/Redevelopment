@@ -23,13 +23,11 @@ interface UserProfile {
   collaborationGuidelines?: Guideline[];
 }
 
-interface ProfileState {
-  data?: UserProfile;
-}
+
 
 const ProfileWindow: React.FC = () => {
-  const profile: ProfileState | null = useAppSelector((state) => state.user.profile);
-  const user = profile?.data;
+  const profile: UserProfile | null = useAppSelector((state) => state.user.profile);
+  const user = profile;
   const fullName = user?.username || "Unnamed User";
   const email = user?.email || "No email provided";
   const phone = user?.phoneNumber || "No phone number";
@@ -86,7 +84,7 @@ const ProfileWindow: React.FC = () => {
               About
             </Text>
             <Text className="text-sm md:text-base text-[#787774]">
-              This user hasn't added an "About" section yet.
+              This user hasn&apos;t added an &quot;About&quot; section yet.
             </Text>
           </Container>
         </Container>

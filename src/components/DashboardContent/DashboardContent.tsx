@@ -87,7 +87,7 @@ const DashboardContent: React.FC = () => {
             >
               &times;
             </button>
-                 <AddBanner onClose={() => setShowAddBanner(false)} />
+            <AddBanner onClose={() => setShowAddBanner(false)} />
           </div>
         </div>
       )}
