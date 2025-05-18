@@ -1,39 +1,24 @@
-'use client';
+"use client";
 import React from "react";
 import { Button, Container, Image, Text } from "@/components";
 import { ProfileImage } from "@/assets/Images";
 import { Icons } from "@/assets/icons";
 import { useAppSelector } from "@/store/hooks";
-
-interface Role {
-  name?: string;
-}
-
-interface Guideline {
-  title?: string;
-  points?: string[];
-}
-
-interface UserProfile {
-  username?: string;
-  email?: string;
-  phoneNumber?: string;
-  isEmailVerified?: boolean;
-  role?: Role;
-  collaborationGuidelines?: Guideline[];
-}
-
-
+import { RootState } from "@/store";
+import { ApiResponse, IBanner, IUser } from "@/types/custom";
 
 const ProfileWindow: React.FC = () => {
-  const profile: UserProfile | null = useAppSelector((state) => state.user.profile);
-  const user = profile;
+  const profile = useAppSelector(
+    (state: RootState) => state.user.profile
+  ) as ApiResponse<IUser> | null;
+  const user = profile?.data;
   const fullName = user?.username || "Unnamed User";
   const email = user?.email || "No email provided";
   const phone = user?.phoneNumber || "No phone number";
   const gender = "Not specified"; // Placeholder
   const address = "No address available"; // Placeholder
   const guidelines = user?.collaborationGuidelines || [];
+  const banners: IBanner[] = user?.banners || [];
 
   return (
     <Container className="w-full h-full relative flex flex-col gap-[30px]">
@@ -43,7 +28,13 @@ const ProfileWindow: React.FC = () => {
           <Button
             className="px-1 md:px-4 py-1 md:py-[10px] rounded-[4px] bg-[#FFFFFF] text-[#515DEF] text-xs md:text-base font-medium"
             leftIcon={
-              <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="16"
+                height="20"
+                viewBox="0 0 16 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M7.99935 8.33329C9.8403 8.33329 11.3327 6.84091 11.3327 4.99996C11.3327 3.15901 9.8403 1.66663 7.99935 1.66663C6.1584 1.66663 4.66602 3.15901 4.66602 4.99996C4.66602 6.84091 6.1584 8.33329 7.99935 8.33329Z"
                   stroke="#515DEF"
@@ -72,15 +63,25 @@ const ProfileWindow: React.FC = () => {
                   {fullName}
                 </Text>
                 {user?.isEmailVerified && (
-                  <Image src={Icons.Varified} width={26} height={26} alt="verified" />
+                  <Image
+                    src={Icons.Varified}
+                    width={26}
+                    height={26}
+                    alt="verified"
+                  />
                 )}
               </span>
-              <Text className="text-sm md:text-base text-[#787774]">{user?.role?.name || "Role unspecified"}</Text>
+              <Text className="text-sm md:text-base text-[#787774]">
+                {user?.role?.name || "Role unspecified"}
+              </Text>
             </Container>
           </Container>
 
           <Container className="w-full relative flex flex-col gap-1">
-            <Text variant="h3" className="text-base md:text-2xl font-semibold text-[#292929]">
+            <Text
+              variant="h3"
+              className="text-base md:text-2xl font-semibold text-[#292929]"
+            >
               About
             </Text>
             <Text className="text-sm md:text-base text-[#787774]">
@@ -94,7 +95,9 @@ const ProfileWindow: React.FC = () => {
       <Container className="w-full relative flex gap-6 flex-col md:flex-row">
         <Container className="w-full rounded-[10px] bg-[#FFFFFF] border border-[#E1E2FF] drop-shadow-xs overflow-hidden">
           <Container className="w-full px-[30px] py-3 border-b border-[#EBF0FB] bg-[#EBF0FB] flex justify-between">
-            <Text className="text-base 2xl:text-2xl text-[#455A64] font-semibold">Personal Information</Text>
+            <Text className="text-base 2xl:text-2xl text-[#455A64] font-semibold">
+              Personal Information
+            </Text>
             <Image src={Icons.EditInfo} alt="edit" width={30} height={30} />
           </Container>
           <Container className="w-full px-4 md:px-[30px] py-3 flex flex-col gap-4 md:pr-[140px]">
@@ -105,9 +108,16 @@ const ProfileWindow: React.FC = () => {
               { infoKey: "Gender", infoValue: gender },
               { infoKey: "Address", infoValue: address },
             ].map(({ infoKey, infoValue }, index) => (
-              <span key={`info-${index}`} className="flex gap-1 md:gap-[80px] flex-col md:flex-row">
-                <Text className="text-sm md:text-base text-[#292929]">{infoKey}</Text>
-                <Text className="text-sm md:text-base text-[#292929]">{infoValue}</Text>
+              <span
+                key={`info-${index}`}
+                className="flex gap-1 md:gap-[80px] flex-col md:flex-row"
+              >
+                <Text className="text-sm md:text-base text-[#292929]">
+                  {infoKey}
+                </Text>
+                <Text className="text-sm md:text-base text-[#292929]">
+                  {infoValue}
+                </Text>
               </span>
             ))}
           </Container>
@@ -115,18 +125,23 @@ const ProfileWindow: React.FC = () => {
 
         <Container className="w-full rounded-[10px] bg-[#FFFFFF] border border-[#E1E2FF] drop-shadow-xs overflow-hidden">
           <Container className="w-full px-4 md:px-[30px] py-3 border-b border-[#EBF0FB] bg-[#EBF0FB] flex justify-between">
-            <Text className="text-base 2xl:text-2xl text-[#455A64] font-semibold">Collaboration Guidelines</Text>
+            <Text className="text-base 2xl:text-2xl text-[#455A64] font-semibold">
+              Collaboration Guidelines
+            </Text>
           </Container>
 
           <Container className="w-full px-4 md:px-[30px] py-3 flex flex-col gap-4">
             {guidelines.length > 0 ? (
               guidelines.map((item, index) => (
-                <span key={`guideline-${index}`} className="flex flex-col gap-1">
+                <span
+                  key={`guideline-${index}`}
+                  className="flex flex-col gap-1"
+                >
                   <Text className="text-sm md:text-base text-[#292929] font-semibold">
                     {item?.title || `Guideline ${index + 1}`}
                   </Text>
                   <ul className="text-sm md:text-base text-[#292929] list-disc list-inside pl-3">
-                    {(item?.points || []).map((point, idx) => (
+                    {(item?.points || []).map((point: string, idx: number) => (
                       <li key={`point-${idx}`}>{point}</li>
                     ))}
                   </ul>
@@ -150,48 +165,82 @@ const ProfileWindow: React.FC = () => {
         </Container>
 
         <Container className="w-full relative flex p-4 items-center gap-4">
-          <Image src={Icons.MoveLeft} alt="left" width={34} height={34} className="hidden md:inline-block mx-auto" />
+          <Image
+            src={Icons.MoveLeft}
+            alt="left"
+            width={34}
+            height={34}
+            className="hidden md:inline-block mx-auto"
+          />
 
           <Container className="w-full relative items-center gap-4 grid md:grid-cols-2 xl:grid-cols-3">
-            {[1, 2, 3].map((_, index: number) => (
-              <Container key={`website-${index}`} className="w-full relative border rounded-[10px] border-[#E1E2FF]">
+            {banners?.map((banner, index: number) => (
+              <Container
+                key={`website-${banner._id}-${index}`}
+                className="w-full relative border rounded-[10px] border-[#E1E2FF]"
+              >
                 <Container className="w-full relative flex p-4 items-center gap-10">
                   <span className="w-full flex gap-6 items-center">
                     <span className="relative flex">
                       <span className="size-[48px] bg-[#4C6FFF] rounded-full flex justify-center items-center">
                         <Text className="text-[#FFFFFF] text-sm md:text-xl font-bold">
-                          CH
+                          {banner.name.slice(0, 2).toUpperCase() || "CH"}
                         </Text>
                       </span>
-                      <span className="absolute bottom-0 right-0 translate-x-2 ">
-                        <Image src={Icons.StarIcon} width={24} height={24} alt="star" />
+                      <span className="absolute bottom-0 right-0 translate-x-2">
+                        <Image
+                          src={Icons.StarIcon}
+                          width={24}
+                          height={24}
+                          alt="star"
+                        />
                       </span>
                     </span>
                     <span>
                       <Text className="text-sm md:text-base font-semibold text-[#27272E]">
-                        Chatgpt.com
+                        {banner.websiteUrl}
                       </Text>
                       <Text className="text-xs md:text-sm text-[#425466]">
-                        DR: 80 | DA: 40
+                        DR: {banner.dr} | DA: {banner.da}
                       </Text>
                     </span>
                   </span>
-                  <Image src={Icons.SquareRight} width={24} height={24} alt="right" />
+                  <Image
+                    src={Icons.SquareRight}
+                    width={24}
+                    height={24}
+                    alt="right"
+                  />
                 </Container>
 
                 <Container className="w-full relative bg-[#EEF2FD] px-4 py-1 flex justify-between">
                   <Text className="text-xs md:text-sm text-[#425466]">
-                    Traffic: <span className="font-semibold">10K/month</span>
+                    Traffic:{" "}
+                    <span className="font-semibold">
+                      {banner.trafficValue}
+                      {banner.trafficUnit === "6823d16e81a262e2bca6a4c8"
+                        ? "K/month"
+                        : ""}
+                    </span>
                   </Text>
                   <Text className="text-xs md:text-sm text-[#425466]">
-                    Category: <span className="font-semibold">AI</span>
+                    Category:{" "}
+                    <span className="font-semibold">
+                      {banner.category?.name || "N/A"}
+                    </span>
                   </Text>
                 </Container>
               </Container>
             ))}
           </Container>
 
-          <Image src={Icons.MoveRight} alt="right" width={34} height={34} className="hidden md:inline-block" />
+          <Image
+            src={Icons.MoveRight}
+            alt="right"
+            width={34}
+            height={34}
+            className="hidden md:inline-block"
+          />
         </Container>
       </Container>
     </Container>

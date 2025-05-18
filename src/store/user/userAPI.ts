@@ -1,5 +1,5 @@
+import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 // Types
 export interface SignInPayload {
@@ -67,8 +67,8 @@ export const signIn = createAsyncThunk(
   "user/signIn",
   async (payload: SignInPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5001/api/auth/login`,
+      const response = await axiosInstance.post(
+        `auth/login`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -93,8 +93,8 @@ export const signUp = createAsyncThunk(
   "user/signup",
   async (payload: SignUpPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5001/api/auth/signup`,
+      const response = await axiosInstance.post(
+        `auth/signup`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -119,7 +119,7 @@ export const getProfile = createAsyncThunk(
   "user/getProfile",
   async (token: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:5001/api/users/profile`, {
+      const response = await axiosInstance.get(`users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -140,7 +140,7 @@ export const updateProfile = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.put(`/api/user/profile`, profile, {
+      const response = await axiosInstance.put(`user/profile`, profile, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -158,8 +158,8 @@ export const signOut = createAsyncThunk(
   "user/signOut",
   async (token: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `/api/user/signout`,
+      const response = await axiosInstance.post(
+        `user/signout`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -183,8 +183,8 @@ export const verifyOtp = createAsyncThunk(
   "user/verifyOtp",
   async (payload: VerifyOtpPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5001/api/auth/verify-otp`,
+      const response = await axiosInstance.post(
+        `auth/verify-otp`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -212,8 +212,8 @@ export const addBanner = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/banners/",
+      const response = await axiosInstance.post(
+        "banners/",
         banner,
         {
           headers: {
@@ -240,7 +240,7 @@ export const getCategories = createAsyncThunk(
   "category/getCategories",
   async (token : string, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:5001/api/categories/",        {
+      const response = await axiosInstance.get("categories/",        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -264,7 +264,7 @@ export const getTrafficUnits = createAsyncThunk(
   "trafficUnit/getTrafficUnits",
   async (token: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:5001/api/static/traffic-units/", {
+      const response = await axiosInstance.get("static/traffic-units/", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -299,9 +299,9 @@ export const getBanners = createAsyncThunk(
         }
       });
 
-      const url = `http://localhost:5001/api/banners/?${params.toString()}`;
+      const url = `banners/?${params.toString()}`;
 
-      const response = await axios.get(url, {
+      const response = await axiosInstance.get(url, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -325,7 +325,7 @@ export const forgotPassword = createAsyncThunk(
   "user/forgotPassword",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:5001/api/auth/forgot-password", { email });
+      const response = await axiosInstance.post("forgot-password/", { email });
       return response.data;
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
@@ -343,8 +343,8 @@ export const resetPassword = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/auth/reset-password",
+      const response = await axiosInstance.post(
+        "reset-password/",
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -360,6 +360,31 @@ export const resetPassword = createAsyncThunk(
         return rejectWithValue(error.response?.data?.message || "Reset password failed");
       }
       return rejectWithValue("Reset password failed");
+    }
+  }
+);
+
+export const getConnections = createAsyncThunk(
+  "connections/getConnections",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/connections");
+      return response.data.connections;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch connections");
+    }
+  }
+);
+export const getRecommendedConnections = createAsyncThunk(
+  "connections/getRecommendedConnections",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/connections/recommended");
+      return response.data.recommendedConnections;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch recommended connections"
+      );
     }
   }
 );

@@ -1,7 +1,25 @@
-import React from "react";
+'use client';
+import React, { useEffect } from "react";
 import { Container, Text, Button, Image } from "@/components";
 import { ProfilePic } from "@/assets/Images";
+import { getConnections, getRecommendedConnections } from "@/store/user/userAPI";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
+
+
 const MyConnectionWindow = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+      dispatch(getRecommendedConnections())
+        .unwrap()
+        .then((res: any) => {
+          console.log("Connections API response:", res);
+        })
+        .catch((err: any) => {
+          console.error("Connections API error:", err);
+        });
+  }, [dispatch]);
 
   const ConnectionFeed = ()=>{
     return <Container className="w-full p-4 relative flex justify-between items-center drop-shadow-sm border border-[#E1E2FF] rounded-[10px]">

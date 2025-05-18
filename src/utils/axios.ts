@@ -8,7 +8,7 @@ import axios, {
 console.log('BASE',process.env.NEXT_PUBLIC_BASE_UR);
 // Create Axios instance
 export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5001",
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5001/api/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -19,9 +19,11 @@ export const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get token from localStorage or wherever you store it
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    // Get token from cookies
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("authToken="))
+    ?.split("=")[1];
 
     // If token exists, add it to the headers
     if (token) {
