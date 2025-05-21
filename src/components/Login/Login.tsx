@@ -154,6 +154,7 @@ const Login: React.FC = () => {
     if (isForgotPassword) {
       // Handle verification code for forgot password
       try {
+        console.log('dat',data)
         const result = await dispatch(
           verifyOtp({ email: getValues("email"), otp: data.otp })
         ).unwrap();

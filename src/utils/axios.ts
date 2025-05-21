@@ -5,7 +5,6 @@ import axios, {
   AxiosRequestConfig,
 } from "axios";
 
-console.log('BASE',process.env.NEXT_PUBLIC_BASE_UR);
 // Create Axios instance
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5001/api/",

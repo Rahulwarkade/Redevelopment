@@ -24,5 +24,6 @@ export { default as ProfileWindow } from "./ProfileWindow/ProfileWindow";
 export { default as PlanFeed } from "./PlanFeed/PlanFeed";
 export { default as FeedWindow } from "./FeedWindow/FeedWindow";
 export { default as AddBanner } from "./AddBanner/AddBanner";
+export { default as Interested } from './Interested/Interested';
 // Re-export common components
 export * from "./common";

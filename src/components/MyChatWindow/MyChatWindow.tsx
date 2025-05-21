@@ -1,14 +1,52 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { Container, Text, Input } from "@/components/common";
 import { ChatWindow } from "@/components";
-const MyChatWindow: React.FC = () => {
-  const Profile = ({ className }: { className: string }) => {
+import { Chat } from "@/types/custom";
+
+const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
+  id,
+  chats,
+}) => {
+  const [recipientId, setRecipientId] = useState<string | null>(id ?? null);
+
+  // Update recipientId if the route id changes
+  useEffect(() => {
+    if (id) {
+      setRecipientId(id);
+    }
+  }, [id]);
+
+  // Find the selected chat's username
+  const selectedChat = chats.find((chat) => chat.user.id === recipientId);
+  const selectedUsername = selectedChat?.user.username ?? "";
+
+  const Profile = ({
+    className,
+    username,
+    latestMessage,
+    unreadCount,
+    onClick,
+    selected,
+  }: {
+    className: string;
+    username: string;
+    latestMessage: string;
+    unreadCount: number;
+    onClick?: () => void;
+    selected?: boolean;
+  }) => {
     return (
       <Container
-        className={`w-full relative flex gap-3 items-center justify-center h-[66px]  rounded-[7px]  px-2 py-[10px] ${className}`}
+        className={`w-full relative flex gap-3 items-center justify-center h-[66px] rounded-[7px] px-2 py-[10px] cursor-pointer ${
+          selected
+            ? "border border-blue_dfe0eb bg-blue_f2f2ff"
+            : ""
+        } ${className}`}
+        onClick={onClick}
       >
         <Container className="w-fit relative">
-          {/* Star icon */}
+          {/* Avatar */}
           <span className="size-[40px] rounded-full bg-grey_bdbdbd flex justify-center items-center">
             <svg
               width="20"
@@ -27,22 +65,25 @@ const MyChatWindow: React.FC = () => {
         </Container>
         {/* Messenger Name and short Description */}
         <Container className="w-full relative flex flex-col">
-          {/* Messenger and recieved time */}
+          {/* Messenger and received time */}
           <Container className="w-full relative flex items-center justify-between">
             <span className="text-black font-medium text-sm md:text-base ">
-              Support ADMIN
+              {username}
             </span>
-            <span className="text-[8px] md:text-xs text-grey_a1a1a1">
-              2 min ago
-            </span>
+            {unreadCount > 0 && (
+              <span className="text-[10px] md:text-xs text-white bg-red-500 rounded-full px-2 py-0.5">
+                {unreadCount}
+              </span>
+            )}
           </Container>
           <span className="text-[8px] md:text-xs text-grey_a1a1a1 line-clamp-1 mr-[38px]">
-            Thank you very much I{"'"}m this and that lorem ipsum text...
+            {latestMessage ?? "No messages yet"}
           </span>
         </Container>
       </Container>
     );
   };
+
   return (
     <section className="w-full h-full relative bg-white_fdfdff rounded-[20px] border border-grey_e1e2ff flex overflow-hidden">
       {/* Messages Container */}
@@ -54,7 +95,6 @@ const MyChatWindow: React.FC = () => {
             <Text className="text-sm md:text-2xl font-semibold text-black_000929">
               Messaging
             </Text>
-
             <span className="p-1 border border-grey_f7f7fd rounded-[5px] flex items-center gap-1 hover:bg-grey_f7f7fd cursor-pointer">
               <Text className="text-xs md:text-sm font-medium text-black_000929">
                 Chat
@@ -123,23 +163,40 @@ const MyChatWindow: React.FC = () => {
           </Container>
         </Container>
 
-        {/* Profile Section container*/}
+        {/* Profile Section container */}
         <Container className="w-full relative">
-          {/* Profile */}
-          {Array.from({ length: 10 }).map((_, index) => (
-            <Profile
-              key={`${index}-profile`}
-              className={`${
-                index === 0 ? "border border-blue_dfe0eb bg-blue_f2f2ff" : ""
-              }`}
-            />
-          ))}
+          {/* Render Profile for each chat */}
+          {chats.length > 0 ? (
+            chats.map((chat) => {
+              return (
+                <Profile
+                  key={chat.connectionId}
+                  className=""
+                  username={chat.user.username}
+                  latestMessage={
+                    typeof chat.latestMessage === "object" &&
+                    chat.latestMessage !== null &&
+                    "content" in chat.latestMessage
+                      ? (chat.latestMessage as { content: string }).content
+                      : (chat.latestMessage ?? "")
+                  }
+                  unreadCount={chat.unreadCount}
+                  selected={recipientId === chat.user.id}
+                  onClick={() => setRecipientId(chat.user.id)}
+                />
+              );
+            })
+          ) : (
+            <span className="text-xs text-gray-400">No chats found.</span>
+          )}
         </Container>
       </Container>
 
       {/* Chat Container */}
       <Container className="w-full relative hidden md:inline-block">
-        <ChatWindow />
+        {recipientId && (
+          <ChatWindow recipientId={recipientId} username={selectedUsername} />
+        )}
       </Container>
     </section>
   );

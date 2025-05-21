@@ -3,9 +3,13 @@ import { Container, Text } from "@/components";
 
 interface ChatMessages {
   isRecieved: boolean;
+  time?: string;
+  children: React.ReactNode;
 }
 const Chat: React.FC<ChatMessages> = ({
   isRecieved,
+  time,
+  children,
 }) => {
   return (
     <Container
@@ -31,9 +35,7 @@ const Chat: React.FC<ChatMessages> = ({
               isRecieved ? "text-[#5D5FEF]" : "text-white"
             }`}
           >
-            Lorem ipsum dolor, commodi nisi corrupti suscipit exercitationem
-            architecto inventore. Ab nobis cum quas consequatur quasi at
-            perspiciatis delectus sint, provident distinctio!
+            {children}
           </Text>
           {/* Time Stamp */}
           <span
@@ -41,7 +43,7 @@ const Chat: React.FC<ChatMessages> = ({
               isRecieved ? "left-0" : "right-0"
             }`}
           >
-            8:00 PM
+            {time}
           </span>
         </Container>
       </Container>

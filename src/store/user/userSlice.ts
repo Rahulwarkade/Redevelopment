@@ -1,20 +1,8 @@
 import { createSlice} from '@reduxjs/toolkit';
 import { signIn, signUp, getProfile, updateProfile, signOut } from './userAPI'; // adjust import paths as needed
+import { UserState } from '@/types/custom';
 
-interface UserProfile {
-    // Define your user profile fields here
-    id: string;
-    name: string;
-    email: string;
-    // ...other fields
-}
 
-interface UserState {
-    profile: UserProfile | null;
-    token: string | null;
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
-}
 
 const initialState: UserState = {
     profile: null,
@@ -43,7 +31,7 @@ export const userSlice = createSlice({
             .addCase(signIn.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.token = action.payload.token;
-                state.profile = action.payload.user;
+                state.profile = action.payload.user; 
             })
             .addCase(signIn.rejected, (state, action) => {
                 state.status = "failed";
@@ -55,7 +43,6 @@ export const userSlice = createSlice({
             })
             .addCase(signUp.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                // Optionally set token/profile if returned
                 state.token = action.payload?.token ?? null;
                 state.profile = action.payload?.user ?? null;
             })
@@ -81,7 +68,7 @@ export const userSlice = createSlice({
             })
             .addCase(updateProfile.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.profile = action.payload;
+                state.profile = action.payload?.user;
             })
             .addCase(updateProfile.rejected, (state, action) => {
                 state.status = "failed";

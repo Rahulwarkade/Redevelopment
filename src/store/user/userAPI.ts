@@ -100,7 +100,6 @@ export const signUp = createAsyncThunk(
           headers: { "Content-Type": "application/json" },
         }
       );
-
     if (response.status !== 201) {
       return rejectWithValue(response.data?.message || "User could not be created. Please try again.");
     } 
@@ -287,7 +286,7 @@ export const getTrafficUnits = createAsyncThunk(
 export const getBanners = createAsyncThunk(
   "banner/getBanners",
   async (
-    { token, filters = {} }: { token: string; filters?: BannerFilters },
+    {  filters = {} }: { filters?: BannerFilters },
     { rejectWithValue }
   ) => {
     try {
@@ -301,12 +300,7 @@ export const getBanners = createAsyncThunk(
 
       const url = `banners/?${params.toString()}`;
 
-      const response = await axiosInstance.get(url, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(url);
 
       if (response.status !== 200) {
         return rejectWithValue(response.data?.message || "Failed to fetch banners");
@@ -363,12 +357,13 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
-
 export const getConnections = createAsyncThunk(
   "connections/getConnections",
-  async (_, { rejectWithValue }) => {
+  async ({ status = "accepted" }: { status?: string } = {}, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/connections");
+      const response = await axiosInstance.get("connections", {
+        params: { status }
+      });
       return response.data.connections;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch connections");
@@ -379,11 +374,170 @@ export const getRecommendedConnections = createAsyncThunk(
   "connections/getRecommendedConnections",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/connections/recommended");
-      return response.data.recommendedConnections;
+      const response = await axiosInstance.get("connections/recommended", {
+        params: { page: 1, limit: 6 }
+      });
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch recommended connections"
+      );
+    }
+  }
+);
+export const sendConnectionRequest = createAsyncThunk(
+  "connections/sendConnectionRequest",
+  async ({recipientId}:{recipientId: string}, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("connections/", { recipientId  });
+      console.log(response)
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send connection request"
+      );
+    }
+  }
+);
+export const markInterested = createAsyncThunk(
+  "banner/markInterested",
+  async (
+    { bannerId, comment }: { bannerId: string; comment: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(`banners/${bannerId}/interested`, { comment });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to mark as interested"
+      );
+    }
+  }
+);
+
+export const declineBanner = createAsyncThunk(
+  "banner/declineBanner",
+  async (bannerId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`banners/${bannerId}/decline`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to decline banner"
+      );
+    }
+  }
+);
+
+export const getNotifications = createAsyncThunk(
+  "notifications/getNotifications",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`users/notifications?userId=${userId}`);
+      return response.data.notifications || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch notifications"
+      );
+    }
+  }
+);
+
+
+export const respondToConnectionRequest = createAsyncThunk(
+  "connections/respondToConnectionRequest",
+  async (
+    { connectionId, status }: { connectionId: string; status: "accepted" | "rejected" },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(`connections/${connectionId}/respond`, { status });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to respond to connection request"
+      );
+    }
+  }
+);
+
+export const getConnectionRequests = createAsyncThunk(
+  "connections/getConnectionRequests",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("connections/requests");
+      return response.data.requests || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch connection requests"
+      );
+    }
+  }
+);
+
+export const deleteConnection = createAsyncThunk(
+  "connections/deleteConnection",
+  async (connectionId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`connections/${connectionId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete connection"
+      );
+    }
+  }
+);
+
+// Get All Chats
+export const getChats = createAsyncThunk(
+  "chat/getChats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/messages/chats");
+      return response.data.chats || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch chats"
+      );
+    }
+  }
+);
+
+// Get Chat Messages 
+export const getChatMessages = createAsyncThunk(
+  "chat/getChatMessages",
+  async (
+    { otherUserId, page = 1, limit = 20 }: { otherUserId: string; page?: number; limit?: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.get(`messages/chat/${otherUserId}`, {
+        params: { page, limit },
+      });
+      return response.data.messages || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch chat messages"
+      );
+    }
+  }
+);
+
+// sendMessage 
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async (
+    { recipientId, content }: { recipientId: string; content: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post("/messages/", { recipientId, content });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send message"
       );
     }
   }
