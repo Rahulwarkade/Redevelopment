@@ -8,6 +8,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/socket.io/:path*',
+        destination: 'http://localhost:5001/socket.io/:path*',
+      },
+    ]
+  },
 };
 
 export default nextConfig;

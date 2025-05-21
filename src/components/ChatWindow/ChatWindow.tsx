@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { useForm } from "react-hook-form";
 import { useAppSelector } from "@/store/hooks";
+import { socket } from "@/app/socket"; // Adjust path if needed
 
 interface Message {
   _id: string;
@@ -22,6 +23,27 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
   const currentUserId = useAppSelector((state) => state.user.profile?.data?.id);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [online, setOnline] = useState(false);
+
+  // Register user on socket connect or when currentUserId changes
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    const handleConnect = () => {
+      socket.emit("register", currentUserId);
+    };
+
+    socket.on("connect", handleConnect);
+
+    // If already connected, register immediately
+    if (socket.connected) {
+      socket.emit("register", currentUserId);
+    }
+
+    return () => {
+      socket.off("connect", handleConnect);
+    };
+  }, [currentUserId]);
 
   useEffect(() => {
     if (recipientId) {
@@ -36,6 +58,39 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
         });
     }
   }, [dispatch, recipientId]);
+  // Listen for new messages and online status
+  useEffect(() => {
+    // Listen for new messages
+    const handleNewMessage = (msg: Message) => {
+      // Only add if it's for this chat
+      if (
+        (msg.sender._id === recipientId && msg.recipient._id === currentUserId) ||
+        (msg.sender._id === currentUserId && msg.recipient._id === recipientId)
+      ) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    };
+
+    // Listen for online status
+    const handleUserOnline = ({ userId }: { userId: string }) => {
+      console.log("User online event:", userId, "recipientId:", recipientId);
+      if (userId === recipientId) setOnline(true);
+    };
+    const handleUserOffline = ({ userId }: { userId: string }) => {
+      console.log("User offline event:", userId, "recipientId:", recipientId);
+      if (userId === recipientId) setOnline(false);
+    };
+
+    socket.on("new_message", handleNewMessage);
+    socket.on("user_online", handleUserOnline);
+    socket.on("user_offline", handleUserOffline);
+
+    return () => {
+      socket.off("new_message", handleNewMessage);
+      socket.off("user_online", handleUserOnline);
+      socket.off("user_offline", handleUserOffline);
+    };
+  }, [recipientId, currentUserId]);
 
   const onSubmit = async (data: { content: string }) => {
     if (!data.content.trim()) return;
@@ -47,6 +102,12 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
       if (res.message) {
         setMessages((prev) => [...prev, res.message]);
       }
+      // Emit message via socket (does not affect existing feature)
+      socket.emit("send_message", {
+        userId: currentUserId,
+        recipientId,
+        content: data.content,
+      });
       reset(); // Clear input after sending
     } catch (err) {
       console.error("Send message error:", err);
@@ -84,9 +145,9 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
               {username}
             </Text>
             <Container className="w-fit relative flex items-center gap-1">
-              <span className="size-[8px] rounded-full  bg-green-400 relative"></span>
+            <span className={`size-[8px] rounded-full ${online ? "bg-green-400" : "bg-gray-400"} relative`}></span>
               <Text className="text-[8px] md:text-xs font-medium text-blue_bababa">
-                Online
+                {online ? "Online" : "Offline"}
               </Text>
             </Container>
           </Container>
