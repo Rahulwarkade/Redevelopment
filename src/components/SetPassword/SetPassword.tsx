@@ -9,11 +9,10 @@ import {
   TreeIlustration,
 } from "@/assets/Images";
 import { useForm } from "react-hook-form";
-import { Icons } from "@/assets/icons";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/store/hooks";
 import { resetPassword } from "@/store/user/userAPI";
-
+import { useRouter } from "next/navigation";
 interface FormData {
   otp: string;
   password: string;
@@ -23,14 +22,11 @@ interface FormData {
 interface ResetPasswordProps {
   email: string;
   otp: string;
-  setShowcomponent: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcomponent }) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -38,8 +34,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
     setError,
   } = useForm<Omit<FormData, "otp">>();
 
-  const togglePasswordVisibility = () => setIsPasswordVisible((v) => !v);
-  const toggleConfirmVisibility = () => setIsConfirmVisible((v) => !v);
   function validatePassword(password: string) {
     if (!/.{3,}/.test(password)) {
       setError("password", {
@@ -101,7 +95,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
       return;
     }
     try {
-      await dispatch(
+      const res = await dispatch(
         resetPassword({
           email,
           otp,
@@ -109,8 +103,9 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
           confirmPassword : data.confirmPassword
         })
       ).unwrap();
+      console.log('res',res);
       toast.success("Password reset successful! Please login.");
-      setShowcomponent(false);
+      router.push('/login');
     } catch (error : any) {
       toast.error(error?.message || "Failed to reset password.");
     }
@@ -156,24 +151,9 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
                           ? "outline-red-500"
                           : "outline-blue_515def"
                       }`}
-                      rightIcon={
-                        <span
-                          onClick={togglePasswordVisibility}
-                          className="flex max-md:size-[12px]"
-                        >
-                          <Image
-                            src={Icons.View}
-                            width={20}
-                            height={20}
-                            alt="View"
-                          />
-                          {isPasswordVisible && (
-                            <span className="transition-all duration-300 ease-in-out w-full h-[1px] bg-black rounded-full absolute rotate-45 top-1/2 -translate-y-1/2"></span>
-                          )}
-                        </span>
-                      }
+
                       maxLength={20}
-                      type={isPasswordVisible ? "text" : "password"}
+                      type={"password"}
                       {...register("password", {
                         required: "Password is required",
                         minLength: 8,
@@ -194,24 +174,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp, setShowcompon
                           ? "outline-red-500"
                           : "outline-blue_515def"
                       }`}
-                      rightIcon={
-                        <span
-                          onClick={toggleConfirmVisibility}
-                          className="flex max-md:size-[12px]"
-                        >
-                          <Image
-                            src={Icons.View}
-                            width={20}
-                            height={20}
-                            alt="View"
-                          />
-                          {isConfirmVisible && (
-                            <span className="transition-all duration-300 ease-in-out w-full h-[1px] bg-black rounded-full absolute rotate-45 top-1/2 -translate-y-1/2"></span>
-                          )}
-                        </span>
-                      }
                       maxLength={20}
-                      type={isConfirmVisible ? "text" : "password"}
+                      type={"password"}
                       {...register("confirmPassword", {
                         required: "Please re-enter your password",
                       })}

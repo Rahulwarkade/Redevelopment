@@ -1,66 +1,6 @@
+import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UserProfile } from "@/types/custom";
 import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-// Types
-export interface SignInPayload {
-  email: string;
-  password: string;
-}
-export interface SignUpPayload {
-  username: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-  confirmPassword: string;
-  agreeToTerms: boolean;
-}
-export interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  // add other fields as needed
-}
-export interface AddBannerPayload {
-  name: string;
-  websiteUrl: string;
-  category: string;
-  isPaid: boolean;
-  amount: string;
-  dr: string;
-  da: string;
-  pa: string;
-  traffic: string;
-  trafficValue: string;
-  trafficUnit: string;
-  gp: string;
-  ex: string;
-  isGuestPost: boolean;
-  isExchangePost: boolean;
-  isPublic: boolean;
-}
-export interface Category {
-  _id: string;
-  name: string;
-}
-export interface TrafficUnit {
-  _id: string;
-  name: string;
-}
-interface BannerFilters {
-  page?: number;
-  limit?: number;
-  category?: string;
-  isPaid?: boolean;
-  isGuestPost?: boolean;
-  isExchangePost?: boolean;
-  minDr?: number;
-  minDa?: number;
-  minPa?: number;
-  minTraffic?: number;
-  trafficUnit?: string;
-  showAll?: boolean;
-  status?: "interested" | "declined";
-}
 
 // Async thunks
 export const signIn = createAsyncThunk(
@@ -202,7 +142,49 @@ export const verifyOtp = createAsyncThunk(
     }
   }
 );
-
+export const forgotPassword = createAsyncThunk(
+  "user/forgotPassword",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("auth/forgot-password/", { email });
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Failed to send reset email");
+      }
+      return rejectWithValue("Failed to send reset email");
+    }
+  }
+);
+export const resetPassword = createAsyncThunk(
+  "user/resetPassword",
+  async (
+    payload: { email: string; otp: string; password: string; confirmPassword: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(
+        "auth/reset-password",
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(response);
+      if (response.status !== 200) {
+        return rejectWithValue(response.data?.message || "Reset password failed");
+      }
+      return response.data;
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        // @ts-expect-error axios error.response is not in TS type but present at runtime
+        return rejectWithValue(error.response?.data?.message || "Reset password failed");
+      }
+      return rejectWithValue("Reset password failed");
+    }
+  }
+);
 
 export const addBanner = createAsyncThunk(
   "banner/addBanner",
@@ -315,48 +297,7 @@ export const getBanners = createAsyncThunk(
     }
   }
 );
-export const forgotPassword = createAsyncThunk(
-  "user/forgotPassword",
-  async (email: string, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post("forgot-password/", { email });
-      return response.data;
-    } catch (error: unknown) {
-      if (error && typeof error === "object" && "response" in error) {
-        // @ts-expect-error axios error.response is not in TS type but present at runtime
-        return rejectWithValue(error.response?.data?.message || "Failed to send reset email");
-      }
-      return rejectWithValue("Failed to send reset email");
-    }
-  }
-);
-export const resetPassword = createAsyncThunk(
-  "user/resetPassword",
-  async (
-    payload: { email: string; otp: string; password: string; confirmPassword: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await axiosInstance.post(
-        "reset-password/",
-        payload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      if (response.status !== 200) {
-        return rejectWithValue(response.data?.message || "Reset password failed");
-      }
-      return response.data;
-    } catch (error: unknown) {
-      if (error && typeof error === "object" && "response" in error) {
-        // @ts-expect-error axios error.response is not in TS type but present at runtime
-        return rejectWithValue(error.response?.data?.message || "Reset password failed");
-      }
-      return rejectWithValue("Reset password failed");
-    }
-  }
-);
+
 export const getConnections = createAsyncThunk(
   "connections/getConnections",
   async ({ status = "accepted" }: { status?: string } = {}, { rejectWithValue }) => {
@@ -538,6 +479,37 @@ export const sendMessage = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to send message"
+      );
+    }
+  }
+);
+
+
+// Get all countries
+export const getCountries = createAsyncThunk(
+  "countries/getCountries",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("static/countries");
+      return response.data.countries || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch countries"
+      );
+    }
+  }
+);
+
+// Get country by ID
+export const getCountryById = createAsyncThunk(
+  "countries/getCountryById",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`static/countries/${id}`);
+      return response.data.country || response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch country"
       );
     }
   }

@@ -10,6 +10,9 @@ import { signUp } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { setAuth } from "@/store/user/authSlice";
+import { Country } from "@/types/custom";
+import CountrySelect from "../CountrySelect/CountrySelect";
+
 
 interface FormData {
   name: string;
@@ -23,6 +26,7 @@ const SignUp: React.FC = () => {
   const router = useRouter();
   const [isAggreeToTerms, setIsAgreeToTerms] = useState<boolean>(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const dispatch = useAppDispatch();
   const {
     register,
@@ -96,7 +100,8 @@ const SignUp: React.FC = () => {
         signUp({
           username: data?.name,
           email: data?.email,
-          phoneNumber: data?.number,
+          phoneNumber: data.number,
+          countryPhoneCode : selectedCountry?._id || '',
           password: data?.password,
           confirmPassword: data?.password,
           agreeToTerms: true,
@@ -115,6 +120,7 @@ const SignUp: React.FC = () => {
       }
 
     } catch (error: any) {
+      console.log(error)
       toast.error(error.message || "We couldn't create your account.");
     }
   };
@@ -204,54 +210,37 @@ const SignUp: React.FC = () => {
                     }
                     errorClassName="text-red-500 text-sm pl-6"
                   />
-                  {/* Number Input */}
-                  <Input
-                    placeholder="e.g. +91 98765 43210"
-                    containerClassName="w-full relative flex flex-col h-[56px] before:content-['Phone_Number'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
-                    className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def ${
-                      errors.number ? "outline-red-500" : "outline-blue_515def"
-                    }`}
-                    {...register("number", {
-                      required: true,
-                      maxLength: 10,
-                      pattern:
-                        /^(?!.*(\d)\1{5,})[6-9](?:(?!(\d)\2{5,}).)*\d{9}$/,
-                    })}
-                    maxLength={10}
-                    onKeyPress={handleKeyPress}
-                    error={
-                      errors?.number?.message
-                        ? String(errors?.number?.message)
-                        : ""
-                    }
-                    errorClassName="text-red-500 text-sm pl-6"
-                  />
+                  {/* Country Select and Number Input */}
+                  <Container className="w-full relative flex  gap-6 items-center">
+                    <CountrySelect value={selectedCountry} onChange={setSelectedCountry} />
+                    <Input
+                      placeholder="e.g. 98765 43210"
+                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Phone_Number'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
+                      className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def ${
+                        errors.number ? "outline-red-500" : "outline-blue_515def"
+                      }`}
+                      {...register("number", {
+                        required: true,
+                        maxLength: 10,
+                        pattern: /^(?!.*(\d)\1{5,})[6-9](?:(?!(\d)\2{5,}).)*\d{9}$/,
+                      })}
+                      maxLength={10}
+                      onKeyPress={handleKeyPress}
+                      error={errors?.number?.message ? String(errors?.number?.message) : ""}
+                      errorClassName="text-red-500 text-sm pl-6"
+                    />
+                  </Container>
                   {/* Password and Confirm Password Input */}
                   <Container className="w-full relative flex gap-6">
                     <Input
-                      placeholder="e.g. +91 98765 43210"
+                      placeholder="********"
                       containerClassName="w-full relative flex flex-col h-[56px] before:content-['Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
                       className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def placeholder:text-xs md:placeholder:text-base ${
                         errors.password
                           ? "outline-red-500"
                           : "outline-blue_515def"
                       }`}
-                      rightIcon={
-                        <span
-                          onClick={togglePasswordVisibility}
-                          className="flex max-md:size-[12px]"
-                        >
-                          <Image
-                            src={Icons.View}
-                            width={20}
-                            height={20}
-                            alt="View"
-                          />
-                          {isPasswordVisible && (
-                            <span className="transition-all duration-300 ease-in-out w-full h-[1px] bg-black rounded-full absolute rotate-45 top-1/2 -translate-y-1/2"></span>
-                          )}
-                        </span>
-                      }
+                      type="password"
                       maxLength={20}
                       {...register("password", { required: true })}
                       error={
@@ -262,31 +251,16 @@ const SignUp: React.FC = () => {
                       errorClassName="text-red-500 text-sm pl-6"
                     />
                     <Input
-                      placeholder="e.g. +91 98765 43210"
-                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
+                      placeholder="********"
+                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Confirm_Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
                       className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def 
                         placeholder:text-xs md:placeholder:text-base ${
                           errors.password
                             ? "outline-red-500"
                             : "outline-blue_515def"
                         }`}
-                      rightIcon={
-                        <span
-                          onClick={togglePasswordVisibility}
-                          className="flex max-md:size-[12px]"
-                        >
-                          <Image
-                            src={Icons.View}
-                            width={20}
-                            height={20}
-                            alt="View"
-                          />
-                          {isPasswordVisible && (
-                            <span className="transition-all duration-300 ease-in-out w-full h-[1px] bg-black rounded-full absolute rotate-45 top-1/2 -translate-y-1/2"></span>
-                          )}
-                        </span>
-                      }
                       maxLength={20}
+                      type="password"
                       {...register("confirmPassword", { required: true })}
                       error={
                         errors?.confirmPassword?.message

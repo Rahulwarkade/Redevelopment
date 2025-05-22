@@ -9,7 +9,7 @@ import apiDemoReducer from "./slices/apiDemoSlice";
 
 import userSlice from "./user/userSlice";
 import authSlice from "./user/authSlice";
-
+import countrySlice from "./user/countrySlice";
 // Configure persist
 const persistConfig = {
   key: "root",
@@ -22,6 +22,7 @@ const rootReducer = combineReducers({
   apiDemo: apiDemoReducer,
   auth: authSlice,
   user: userSlice,
+  country : countrySlice,
   // Add more reducers here
 });
 

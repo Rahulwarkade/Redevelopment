@@ -3,6 +3,67 @@ declare module "*.svg" {
   const SVG: React.FC<React.SVGProps<SVGSVGElement>>;
   export default SVG;
 }
+// Types
+export interface SignInPayload {
+  email: string;
+  password: string;
+}
+export interface SignUpPayload {
+  username: string;
+  email: string;
+  phoneNumber: string;
+  countryPhoneCode : string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+}
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  // add other fields as needed
+}
+export interface AddBannerPayload {
+  name: string;
+  websiteUrl: string;
+  category: string;
+  isPaid: boolean;
+  amount: string;
+  dr: string;
+  da: string;
+  pa: string;
+  traffic: string;
+  trafficValue: string;
+  trafficUnit: string;
+  gp: string;
+  ex: string;
+  isGuestPost: boolean;
+  isExchangePost: boolean;
+  isPublic: boolean;
+}
+export interface Category {
+  _id: string;
+  name: string;
+}
+export interface TrafficUnit {
+  _id: string;
+  name: string;
+}
+interface BannerFilters {
+  page?: number;
+  limit?: number;
+  category?: string;
+  isPaid?: boolean;
+  isGuestPost?: boolean;
+  isExchangePost?: boolean;
+  minDr?: number;
+  minDa?: number;
+  minPa?: number;
+  minTraffic?: number;
+  trafficUnit?: string;
+  showAll?: boolean;
+  status?: "interested" | "declined";
+}
 interface UserProfile {
   success: boolean;
   data: {
@@ -126,4 +187,13 @@ export interface Chat {
   latestMessage: string | null;
   unreadCount: number;
   updatedAt: string;
+}
+
+export interface Country {
+  _id: string;
+  code: string;
+  name: string;
+  phoneCode: string;
+  flagEmoji?: string;
+  isActive: boolean;
 }
