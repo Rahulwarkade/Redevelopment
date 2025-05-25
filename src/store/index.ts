@@ -14,7 +14,7 @@ import countrySlice from "./user/countrySlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["demo","auth"], // Add slices you want to persist
+  whitelist: ["demo","auth","country"], // Add slices you want to persist
 };
 
 const rootReducer = combineReducers({

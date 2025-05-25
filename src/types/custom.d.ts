@@ -83,7 +83,19 @@ interface UserProfile {
     banners?: any[];
   };
 }
-
+export interface UpdateProfilePayload {
+  fullName: string;
+  designation?: string;
+  gender?: string;
+  countryPhoneCode?: string;
+  phoneNumber?: string;
+  address?: string;
+  profileDescription?: string;
+}
+export interface UpdateProfileThunkArg {
+  profile: UpdateProfilePayload;
+  token: string;
+}
 interface UserState {
   profile: UserProfile | null;
   token: string | null;

@@ -1,4 +1,4 @@
-import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UserProfile } from "@/types/custom";
+import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UpdateProfilePayload, UserProfile } from "@/types/custom";
 import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -72,26 +72,6 @@ export const getProfile = createAsyncThunk(
   }
 );
 
-export const updateProfile = createAsyncThunk(
-  "user/updateProfile",
-  async (
-    { profile, token }: { profile: Partial<UserProfile>; token: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await axiosInstance.put(`user/profile`, profile, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error: unknown) {
-      if (error && typeof error === "object" && "response" in error) {
-        // @ts-expect-error axios error.response is not in TS type but present at runtime
-        return rejectWithValue(error.response?.data?.message || "Update profile failed");
-      }
-      return rejectWithValue("Update profile failed");
-    }
-  }
-);
 
 export const signOut = createAsyncThunk(
   "user/signOut",
@@ -171,7 +151,6 @@ export const resetPassword = createAsyncThunk(
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response);
       if (response.status !== 200) {
         return rejectWithValue(response.data?.message || "Reset password failed");
       }
@@ -182,6 +161,75 @@ export const resetPassword = createAsyncThunk(
         return rejectWithValue(error.response?.data?.message || "Reset password failed");
       }
       return rejectWithValue("Reset password failed");
+    }
+  }
+);
+
+// Update Profile
+export const updateProfile = createAsyncThunk(
+  "user/updateProfile",
+  async (
+    profile: UpdateProfilePayload,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        "users/profile",
+        profile,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      if (response.status !== 200 && response.status !== 201) {
+        return rejectWithValue(response.data?.message || "Update profile failed");
+      }
+      return response.data;
+    } catch (error: any) {
+      if (error && typeof error === "object" && "response" in error) {
+        return rejectWithValue(error.response?.data?.message || "Update profile failed");
+      }
+      return rejectWithValue("Update profile failed");
+    }
+  }
+);
+
+// update Password
+// Type for update password payload
+export interface UpdatePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+// AsyncThunk for updating password
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (
+    payload: UpdatePasswordPayload,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        "users/update-password",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status !== 200 && response.status !== 201) {
+        return rejectWithValue(response.data?.message || "Update password failed");
+      }
+      return response.data;
+    } catch (error: any) {
+      if (error && typeof error === "object" && "response" in error) {
+        return rejectWithValue(error.response?.data?.message || "Update password failed");
+      }
+      return rejectWithValue("Update password failed");
     }
   }
 );

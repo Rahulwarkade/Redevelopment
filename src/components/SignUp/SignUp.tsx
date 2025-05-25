@@ -25,7 +25,6 @@ interface FormData {
 const SignUp: React.FC = () => {
   const router = useRouter();
   const [isAggreeToTerms, setIsAgreeToTerms] = useState<boolean>(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const dispatch = useAppDispatch();
   const {
@@ -35,9 +34,7 @@ const SignUp: React.FC = () => {
     setError,
     reset,
   } = useForm<FormData>();
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!/[\d]/.test(e.key)) {
       e.preventDefault();

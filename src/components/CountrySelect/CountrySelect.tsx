@@ -7,6 +7,7 @@ import { Container } from "../common";
 interface Props {
   value?: Country | null;
   onChange: (country: Country) => void;
+  disabled? : boolean;
 }
 
 const normalize = (text: string) =>
@@ -16,7 +17,7 @@ const normalize = (text: string) =>
     .toLowerCase()
     .trim();
 
-const CountrySelect: React.FC<Props> = ({ value, onChange }) => {
+const CountrySelect: React.FC<Props> = ({ value, onChange,disabled }) => {
   const dispatch = useAppDispatch();
   const countries = useAppSelector((state) => state.country.countries);
   const loading = useAppSelector((state) => state.country.loading);
@@ -95,7 +96,7 @@ const CountrySelect: React.FC<Props> = ({ value, onChange }) => {
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="w-full h-full border rounded px-2 py-2 flex items-center justify-between"
+        className="w-full h-full border border-[#DEDEDE] rounded px-2 py-2 flex items-center justify-between"
         onClick={() => {
           setOpen((prev) => !prev);
           setTimeout(() => inputRef.current?.focus(), 0);
@@ -136,6 +137,7 @@ const CountrySelect: React.FC<Props> = ({ value, onChange }) => {
               }}
               autoFocus
               aria-label="Search countries"
+              disabled={disabled}
             />
           </Container>
 

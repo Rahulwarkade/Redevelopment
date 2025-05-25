@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Image, Input, Text } from "@/components";
 import {
   SetPasswordImg,
@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/store/hooks";
-import { resetPassword } from "@/store/user/userAPI";
+import { forgotPassword, resetPassword } from "@/store/user/userAPI";
 import { useRouter } from "next/navigation";
 interface FormData {
   otp: string;
@@ -21,18 +21,32 @@ interface FormData {
 
 interface ResetPasswordProps {
   email: string;
-  otp: string;
 }
 
-const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
+const ResetPassword: React.FC<ResetPasswordProps> = ({ email }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [otpExpired, setOtpExpired] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<Omit<FormData, "otp">>();
+    setValue
+  } = useForm<FormData>();
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (!canResend && resendTimer > 0) {
+      timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer, canResend]);
+
 
   function validatePassword(password: string) {
     if (!/.{3,}/.test(password)) {
@@ -65,6 +79,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
     }
     return true;
   }
+  
   const confirmPassword = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       setError("confirmPassword", {
@@ -75,7 +90,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
     }
     return true;
   };
-  const handleFormSubmit = async (data: Omit<FormData, "otp">) => {
+
+  const handleFormSubmit = async (data: FormData) => {
     const isPasswordValid = validatePassword(data.password);
     if (!isPasswordValid) return;
     const isConfirm = confirmPassword(data.password, data.confirmPassword);
@@ -94,23 +110,41 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
       });
       return;
     }
+
     try {
       const res = await dispatch(
         resetPassword({
           email,
-          otp,
+          otp : data.otp,
           password: data.password,
-          confirmPassword : data.confirmPassword
+          confirmPassword: data.confirmPassword,
         })
       ).unwrap();
-      console.log('res',res);
-      toast.success("Password reset successful! Please login.");
-      router.push('/login');
-    } catch (error : any) {
+
+      if(res.success)
+      {
+        toast.success("Password reset successful! Please login.");
+        router.push("/login");
+      }
+    } catch (error: any) {
       toast.error(error?.message || "Failed to reset password.");
     }
   };
-
+  const handleResendOtp = async () => {
+    try {
+      // Resend login OTP
+      await dispatch(forgotPassword(email)).unwrap();
+      toast.success("OTP resent to your email address");
+      setResendTimer(30);
+      setCanResend(false);
+      setOtpExpired(false);
+      setValue("otp", "");
+    } catch (error: unknown) {
+      const errorMsg =
+        (error as any)?.message || "Failed to resend verification code.";
+      toast.error(errorMsg);
+    }
+  };
   return (
     <>
       <section className="w-full relative flex flex-col gap-4">
@@ -142,6 +176,19 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
               >
                 <Container className="w-full flex flex-col gap-[40px]">
                   <Container className="w-full relative flex flex-col gap-6">
+                    <Input
+                      placeholder="Enter Verification Code"
+                      containerClassName="w-full relative flex flex-col h-[56px] before:content-['Code'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
+                      className={`w-full h-full border border-gray_79747E rounded-[4px] p-4 before:bg-white outline-blue_515def placeholder:text-xs md:placeholder:text-base`}
+                      type="text"
+                      maxLength={6}
+                      {...register("otp", { required: true })}
+                      error={
+                        errors?.otp?.message ? String(errors?.otp?.message) : ""
+                      }
+                      errorClassName="text-red-500 text-sm pl-6"
+                      disabled={otpExpired}
+                    />
                     {/* New Password Input */}
                     <Input
                       placeholder="New Password"
@@ -151,7 +198,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
                           ? "outline-red-500"
                           : "outline-blue_515def"
                       }`}
-
                       maxLength={20}
                       type={"password"}
                       {...register("password", {
@@ -196,6 +242,26 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ email, otp }) => {
                       Set password
                     </Button>
                   </Container>
+                  {!otpExpired && (
+                    <div className="flex flex-col items-center gap-2 mt-2">
+                      {!canResend ? (
+                        <Text className="text-center text-sm text-black_313131">
+                          Resend otp in{" "}
+                          <span className="font-semibold">
+                            00:{String(resendTimer).padStart(2, "0")}
+                          </span>
+                        </Text>
+                      ) : (
+                        <Button
+                          type="button"
+                          className="text-blue-600 disabled:text-gray-400 cursor-pointer"
+                          onClick={handleResendOtp}
+                        >
+                          Resend OTP
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </Container>
               </form>
             </Container>
