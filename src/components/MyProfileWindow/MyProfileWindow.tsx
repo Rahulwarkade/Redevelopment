@@ -3,30 +3,19 @@ import React, { useState, useEffect } from "react";
 import { Container, Text, Button, Input, Image, PlanFeed } from "@/components";
 import { Icons } from "@/assets/icons";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { updateProfile, updatePassword } from "@/store/user/userAPI";
+import {
+  updateProfile,
+  updatePassword,
+  getAllPlans,
+  uploadProfileImage,
+} from "@/store/user/userAPI";
 import { toast } from "react-toastify";
-import { Country } from "@/types/custom";
+import { Country, ProfileType } from "@/types/custom";
 import CountrySelect from "../CountrySelect/CountrySelect";
 import axiosInstance from "@/utils/axios"; // Make sure this is your axios setup
 import { useForm } from "react-hook-form";
 
 const MyProfileWindow = () => {
-  type ProfileType = {
-    id: string;
-    _id: string;
-    username: string;
-    fullName?: string;
-    email: string;
-    phoneNumber?: string;
-    role?: { _id: string; code: string; name: string };
-    isEmailVerified?: boolean;
-    isPhoneVerified?: boolean;
-    collaborationGuidelines?: any[];
-    banners?: any[];
-    gender?: string;
-    address?: string;
-    countryPhoneCode?: { _id: string; phoneCode: string };
-  };
 
   const user: ProfileType | undefined = useAppSelector(
     (state) => state.user?.profile?.data
@@ -38,10 +27,15 @@ const MyProfileWindow = () => {
   const GeneralInformation = () => {
     const countries = useAppSelector((state) => state.country.countries);
     const [isEditing, setIsEditing] = useState(false);
-    const [genders, setGenders] = useState<{ _id: string; code: string; name: string }[]>([]);
+    const [genders, setGenders] = useState<
+      { _id: string; code: string; name: string }[]
+    >([]);
     const [selectedGenderId, setSelectedGenderId] = useState<string>("");
 
-    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(
+      null
+    );
+    const [uploading, setUploading] = useState(false);
 
     // React Hook Form setup
     const {
@@ -76,7 +70,9 @@ const MyProfileWindow = () => {
     // Set selected country from profile
     useEffect(() => {
       if (profile?.countryPhoneCode?._id && countries && countries.length > 0) {
-        const found = countries.find((c) => c._id === profile?.countryPhoneCode?._id);
+        const found = countries.find(
+          (c) => c._id === profile?.countryPhoneCode?._id
+        );
         if (found) setSelectedCountry(found);
       }
     }, [countries, profile?.countryPhoneCode?._id]);
@@ -90,12 +86,18 @@ const MyProfileWindow = () => {
       });
       if (profile?.gender) setSelectedGenderId(profile.gender?._id);
       if (profile?.countryPhoneCode?._id && countries.length > 0) {
-        const found = countries.find((c) => c._id === profile?.countryPhoneCode?._id);
+        const found = countries.find(
+          (c) => c._id === profile?.countryPhoneCode?._id
+        );
         if (found) setSelectedCountry(found);
       }
     }, [isEditing, profile, countries, reset]);
 
-    const handleProfileUpdate = async (data: { fullName: string; phoneNumber: string; address: string }) => {
+    const handleProfileUpdate = async (data: {
+      fullName: string;
+      phoneNumber: string;
+      address: string;
+    }) => {
       const payload = {
         fullName: data.fullName,
         phoneNumber: data.phoneNumber,
@@ -120,8 +122,27 @@ const MyProfileWindow = () => {
       reset();
       if (profile?.gender) setSelectedGenderId(profile.gender?._id);
       if (profile?.countryPhoneCode?._id && countries.length > 0) {
-        const found = countries.find((c) => c._id === profile?.countryPhoneCode?._id);
+        const found = countries.find(
+          (c) => c._id === profile?.countryPhoneCode?._id
+        );
         if (found) setSelectedCountry(found);
+      }
+    };
+
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setUploading(true);
+      try {
+        const res = await dispatch(uploadProfileImage(file)).unwrap();
+        console.log("Profile image upload response:", res);
+        toast.success("Profile image updated!");
+        // Optionally update profile image in UI
+        setProfile((prev) => prev ? { ...prev, profileImage: res.data.profileImage } : prev);
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to upload image");
+      } finally {
+        setUploading(false);
       }
     };
 
@@ -152,7 +173,10 @@ const MyProfileWindow = () => {
                   readOnly={!isEditing}
                   {...register("fullName", {
                     required: "Full name is required.",
-                    minLength: { value: 3, message: "Full name must be at least 3 characters." },
+                    minLength: {
+                      value: 3,
+                      message: "Full name must be at least 3 characters.",
+                    },
                   })}
                   error={errors.fullName?.message}
                   errorClassName="text-red-500 text-sm pl-6"
@@ -171,7 +195,9 @@ const MyProfileWindow = () => {
                 <Container className="w-full flex gap-6">
                   <CountrySelect
                     value={selectedCountry}
-                    onChange={(country) => isEditing && setSelectedCountry(country)}
+                    onChange={(country) =>
+                      isEditing && setSelectedCountry(country)
+                    }
                     disabled={!isEditing}
                   />
                   <Input
@@ -195,12 +221,31 @@ const MyProfileWindow = () => {
               </Container>
 
               <Container className="w-fit rounded-[4px] px-[70px] py-[40px] flex flex-col gap-1 items-center justify-center border border-[#DEDEDE]">
-                <span className="size-[38px] relative flex">
-                  <Image src={Icons.Upload} alt="upload" fill />
-                </span>
-                <Text className="text-xs md:text-sm text-[#191D23]">
-                  Upload Photo
-                </Text>
+                <label className="cursor-pointer flex flex-col items-center">
+                  <span className="size-[38px] relative flex">
+                    <Image
+                      src={profile?.profileImage || Icons.Upload}
+                      alt="upload"
+                      fill
+                      className="object-cover rounded-full"
+                    />
+                    {uploading && (
+                      <span className="absolute inset-0 flex items-center justify-center bg-white/60">
+                        <span className="loader" /> {/* Replace with your loader if needed */}
+                      </span>
+                    )}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    disabled={uploading}
+                  />
+                  <Text className="text-xs md:text-sm text-[#191D23] text-nowrap">
+                    {uploading ? "Uploading..." : "Upload Photo"}
+                  </Text>
+                </label>
               </Container>
             </Container>
 
@@ -240,7 +285,10 @@ const MyProfileWindow = () => {
                 readOnly={!isEditing}
                 {...register("address", {
                   required: "Address is required.",
-                  minLength: { value: 5, message: "Address must be at least 5 characters." },
+                  minLength: {
+                    value: 5,
+                    message: "Address must be at least 5 characters.",
+                  },
                 })}
                 error={errors.address?.message}
                 errorClassName="text-red-500 text-sm pl-6"
@@ -337,8 +385,7 @@ const MyProfileWindow = () => {
       }
       try {
         const res = await dispatch(updatePassword(data)).unwrap();
-        if(res.success)
-        {
+        if (res.success) {
           toast.success("Password updated successfully!");
           setIsEditing(false);
           reset();
@@ -395,7 +442,7 @@ const MyProfileWindow = () => {
                   readOnly={!isEditing}
                   {...register("newPassword", {
                     required: "New password is required.",
-                    minLength : 8
+                    minLength: 8,
                   })}
                   error={errors.newPassword?.message}
                   errorClassName="text-red-500 text-sm pl-6"
@@ -410,7 +457,7 @@ const MyProfileWindow = () => {
                   readOnly={!isEditing}
                   {...register("confirmPassword", {
                     required: "Confirm password is required.",
-                    minLength : 8
+                    minLength: 8,
                   })}
                   error={errors.confirmPassword?.message}
                   errorClassName="text-red-500 text-sm pl-6"
@@ -451,43 +498,58 @@ const MyProfileWindow = () => {
     );
   };
 
-  const BillingAndPayments = () => (
-    <Container className="w-full h-full p-4 md:p-[30px] flex flex-col gap-[30px]">
-      <Text className="text-base md:text-2xl font-medium text-black">
-        Billing & Payments
-      </Text>
-      <Text className="text-sm md:text-xl text-[#787774]">
-        Manage Your Billing and Payments from here.
-      </Text>
-      <Container className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        {[
-          {
-            planIcon: false,
-            planName: "For individuals",
-            Subscription: "Free",
-            SubscriptionDuration: "3 Months",
-            planType: "Basic",
-          },
-          {
-            planIcon: Icons.EnterpriseIcon,
-            planName: "For Startups",
-            Subscription: "$199",
-            SubscriptionDuration: "6 Months",
-            planType: "Pro",
-          },
-          {
-            planIcon: Icons.ProIcon,
-            planName: "For big companies",
-            Subscription: "$399",
-            SubscriptionDuration: "12 Months",
-            planType: "Enterprise",
-          },
-        ].map((plan, index) => (
-          <PlanFeed key={index} planDetails={plan} isPro={index === 1} />
-        ))}
+  const BillingAndPayments = () => {
+    const [plans, setPlans] = useState<any[]>([]);
+
+    useEffect(() => {
+      dispatch(getAllPlans())
+        .unwrap()
+        .then((res) => {
+          // If your API returns { data: [...] }
+          setPlans(res?.data || []);
+        })
+        .catch((err) => {
+          console.error("Plans error:", err);
+        });
+    }, [dispatch]);
+
+    // Map planId or name to icon
+    const getPlanIcon = (planId: string) => {
+      if (planId === "free") return false;
+      if (planId === "pro") return Icons.EnterpriseIcon;
+      if (planId === "enterprise") return Icons.ProIcon;
+      return false;
+    };
+
+    return (
+      <Container className="w-full h-full p-4 md:p-[30px] flex flex-col gap-[30px]">
+        <Text className="text-base md:text-2xl font-medium text-black">
+          Billing & Payments
+        </Text>
+        <Text className="text-sm md:text-xl text-[#787774]">
+          Billing & Payments Manage Your Billing and Payments from here. You can
+          also manage your payment methods from here.{" "}
+        </Text>
+        <Container className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          {plans.map((plan) => (
+            <PlanFeed
+              key={plan._id}
+              planDetails={{
+                planIcon: getPlanIcon(plan.planId),
+                planName: plan.name,
+                Subscription: plan.price === 0 ? "Free" : `$${plan.price}`,
+                SubscriptionDuration: plan.billingPeriod,
+                planType: plan.name,
+                features: plan.features,
+                description: plan.description,
+              }}
+              isPro={plan.planId === "pro"}
+            />
+          ))}
+        </Container>
       </Container>
-    </Container>
-  );
+    );
+  };
 
   return (
     <section className="w-full h-full bg-white_fdfdff rounded-[20px] border border-grey_e1e2ff overflow-hidden">

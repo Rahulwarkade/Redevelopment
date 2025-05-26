@@ -1,4 +1,4 @@
-import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UpdateProfilePayload, UserProfile } from "@/types/custom";
+import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UpdatePasswordPayload, UpdateProfilePayload, UserProfile, VerifyOtpPayload } from "@/types/custom";
 import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -93,10 +93,6 @@ export const signOut = createAsyncThunk(
   }
 );
 
-export interface VerifyOtpPayload {
-  email: string;
-  otp: string;
-}
 
 export const verifyOtp = createAsyncThunk(
   "user/verifyOtp",
@@ -122,6 +118,7 @@ export const verifyOtp = createAsyncThunk(
     }
   }
 );
+
 export const forgotPassword = createAsyncThunk(
   "user/forgotPassword",
   async (email: string, { rejectWithValue }) => {
@@ -196,14 +193,6 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-// update Password
-// Type for update password payload
-export interface UpdatePasswordPayload {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
 // AsyncThunk for updating password
 export const updatePassword = createAsyncThunk(
   "user/updatePassword",
@@ -234,6 +223,38 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
+// upload image 
+
+export const uploadProfileImage = createAsyncThunk(
+  "user/uploadProfileImage",
+  async (file: File, { rejectWithValue }) => {
+    try {
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      const response = await axiosInstance.post(
+        "/users/profile/image",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status !== 200 && response.status !== 201) {
+        return rejectWithValue(response.data?.message || "Failed to upload image");
+      }
+      return response.data;
+    } catch (error: any) {
+      if (error && typeof error === "object" && "response" in error) {
+        return rejectWithValue(error.response?.data?.message || "Failed to upload image");
+      }
+      return rejectWithValue("Failed to upload image");
+    }
+  }
+);
+
+// Add Banner 
 export const addBanner = createAsyncThunk(
   "banner/addBanner",
   async (
@@ -562,3 +583,25 @@ export const getCountryById = createAsyncThunk(
     }
   }
 );
+
+
+// Get all Plans
+export const getAllPlans = createAsyncThunk(
+  "user/getAllPlans",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/payments/admin/plans");
+      if (response.status !== 200 && response.status !== 201) {
+        return rejectWithValue(response.data?.message || "Failed to fetch plans");
+      }
+      return response.data;
+    } catch (error: any) {
+      if (error && typeof error === "object" && "response" in error) {
+        return rejectWithValue(error.response?.data?.message || "Failed to fetch plans");
+      }
+      return rejectWithValue("Failed to fetch plans");
+    }
+  }
+);
+
+

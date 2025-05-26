@@ -174,7 +174,8 @@ const ProfileWindow: React.FC = () => {
           />
 
           <Container className="w-full relative items-center gap-4 grid md:grid-cols-2 xl:grid-cols-3">
-            {banners?.map((banner, index: number) => (
+            {(banners && banners.length>0) ? 
+            (banners?.map((banner, index: number) => (
               <Container
                 key={`website-${banner._id}-${index}`}
                 className="w-full relative border rounded-[10px] border-[#E1E2FF]"
@@ -231,7 +232,9 @@ const ProfileWindow: React.FC = () => {
                   </Text>
                 </Container>
               </Container>
-            ))}
+            ))) : (<Text className="text-sm md:text-base text-[#787774]">
+                No Websites have been added.
+              </Text>)}
           </Container>
 
           <Image

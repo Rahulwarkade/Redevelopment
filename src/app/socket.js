@@ -2,4 +2,12 @@
 
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:5001");
+let socket;
+
+if (!socket) {
+  socket = io("http://localhost:5001", {
+    autoConnect: false, // Prevent auto connection on import
+  });
+}
+
+export { socket };

@@ -12,7 +12,7 @@ export interface SignUpPayload {
   username: string;
   email: string;
   phoneNumber: string;
-  countryPhoneCode : string;
+  countryPhoneCode: string;
   password: string;
   confirmPassword: string;
   agreeToTerms: boolean;
@@ -209,3 +209,34 @@ export interface Country {
   flagEmoji?: string;
   isActive: boolean;
 }
+
+export interface VerifyOtpPayload {
+  email: string;
+  otp: string;
+}
+
+// update Password
+// Type for update password payload
+export interface UpdatePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+type ProfileType = {
+  id: string;
+  _id: string;
+  username: string;
+  fullName?: string;
+  profileImage? : string;
+  email: string;
+  phoneNumber?: string;
+  role?: { _id: string; code: string; name: string };
+  isEmailVerified?: boolean;
+  isPhoneVerified?: boolean;
+  collaborationGuidelines?: any[];
+  banners?: any[];
+  gender?: string;
+  address?: string;
+  countryPhoneCode?: { _id: string; phoneCode: string };
+};

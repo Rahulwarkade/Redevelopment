@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "backlink-backend.s3.ap-south-1.amazonaws.com",
+      }
     ],
   },
   async rewrites() {

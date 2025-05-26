@@ -11,6 +11,8 @@ const PlanFeed = ({
     Subscription: string;
     SubscriptionDuration: string;
     planType: string;
+    description?: string;
+    features?: { [key: string]: string | number };
   };
   isPro: boolean;
 }) => {
@@ -113,11 +115,41 @@ const PlanFeed = ({
         </Text>
       </Container>
 
-      {/* plans blute points */}
+      {/* plans bullet points */}
       <Container className="w-full relative flex flex-col gap-5">
-        {Array.from({ length: 5 }).map((_, index: number) => {
-          return (
-            <ul key={`plan-${index}`}>
+        {/* Render description if present */}
+        {planDetails.description && (
+          <ul>
+            <span className="flex gap-[14px] items-center">
+              {isPro ? (
+                <Image
+                  src={Icons.CheckCircle2}
+                  width={26}
+                  height={26}
+                  alt="circle"
+                />
+              ) : (
+                <Image
+                  src={Icons.CheckCircle1}
+                  width={26}
+                  height={26}
+                  alt="circle"
+                />
+              )}
+              <li
+                className={`text-sm md:text-base ${
+                  isPro ? "text-white" : "text-[#170F49]"
+                } `}
+              >
+                {planDetails.description}
+              </li>
+            </span>
+          </ul>
+        )}
+        {/* Render features if present */}
+        {planDetails.features &&
+          Object.entries(planDetails.features).map(([key, value]) => (
+            <ul key={key}>
               <span className="flex gap-[14px] items-center">
                 {isPro ? (
                   <Image
@@ -139,12 +171,17 @@ const PlanFeed = ({
                     isPro ? "text-white" : "text-[#170F49]"
                   } `}
                 >
-                  All analytics features
+                  {key === "trackedVisits"
+                    ? `Tracked Visits: ${value}`
+                    : key === "supportLevel"
+                    ? `Support Level: ${value}`
+                    : key === "teamMembers"
+                    ? `Team Members: ${value}`
+                    : `${key}: ${value}`}
                 </li>
               </span>
             </ul>
-          );
-        })}
+          ))}
       </Container>
 
       {/* Get started button */}
