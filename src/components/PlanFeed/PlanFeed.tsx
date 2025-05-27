@@ -1,9 +1,11 @@
 import React from "react"
 import { Container, Text, Button, Image } from "@/components";
 import { Icons } from "@/assets/icons";
+
 const PlanFeed = ({
   planDetails,
   isPro,
+  onGetStarted,
 }: {
   planDetails: {
     planIcon: string;
@@ -15,6 +17,7 @@ const PlanFeed = ({
     features?: { [key: string]: string | number };
   };
   isPro: boolean;
+  onGetStarted?: () => void;
 }) => {
   {
     /* Plan */
@@ -190,6 +193,7 @@ const PlanFeed = ({
           className={`w-full relative h-[48px] rounded-full  text-base md:text-lg font-medium flex itemx-center justify-center ${
             isPro ? "bg-white text-[#515DEF]" : " bg-[#515DEF] text-white"
           }`}
+          onClick={onGetStarted}
         >
           Get started
         </Button>
@@ -198,4 +202,4 @@ const PlanFeed = ({
   );
 };
 
-export default PlanFeed
+export default PlanFeed;

@@ -8,6 +8,7 @@ import {
   updatePassword,
   getAllPlans,
   uploadProfileImage,
+  createCheckoutSession,
 } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
 import { Country, ProfileType } from "@/types/custom";
@@ -16,7 +17,6 @@ import axiosInstance from "@/utils/axios"; // Make sure this is your axios setup
 import { useForm } from "react-hook-form";
 
 const MyProfileWindow = () => {
-
   const user: ProfileType | undefined = useAppSelector(
     (state) => state.user?.profile?.data
   );
@@ -521,6 +521,23 @@ const MyProfileWindow = () => {
       return false;
     };
 
+    const handleGetStarted = async (planId: string, billingPeriod: string) => {
+      try {
+        const res = await dispatch(
+          createCheckoutSession({ planId, billingPeriod })
+        ).unwrap();
+        console.log("Checkout session response:", res);
+        // If your backend returns a URL for Stripe checkout, redirect:
+        if(res.success)
+          {
+            const paymentUrl = res?.data?.url;
+            window.location.href = paymentUrl;
+        }
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to start checkout session");
+      }
+    };
+
     return (
       <Container className="w-full h-full p-4 md:p-[30px] flex flex-col gap-[30px]">
         <Text className="text-base md:text-2xl font-medium text-black">
@@ -544,6 +561,9 @@ const MyProfileWindow = () => {
                 description: plan.description,
               }}
               isPro={plan.planId === "pro"}
+              onGetStarted={() =>
+                handleGetStarted(plan.planId, plan.billingPeriod)
+              }
             />
           ))}
         </Container>

@@ -590,7 +590,7 @@ export const getAllPlans = createAsyncThunk(
   "user/getAllPlans",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/payments/admin/plans");
+      const response = await axiosInstance.get("/payments/plans");
       if (response.status !== 200 && response.status !== 201) {
         return rejectWithValue(response.data?.message || "Failed to fetch plans");
       }
@@ -604,4 +604,29 @@ export const getAllPlans = createAsyncThunk(
   }
 );
 
+
+// checkout session
+export const createCheckoutSession = createAsyncThunk(
+  "user/createCheckoutSession",
+  async (
+    { planId, billingPeriod }: { planId: string; billingPeriod: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(
+        "/payments/checkout",
+        { planId, billingPeriod }
+      );
+      if (response.status !== 200 && response.status !== 201) {
+        return rejectWithValue(response.data?.message || "Failed to create checkout session");
+      }
+      return response.data;
+    } catch (error: any) {
+      if (error && typeof error === "object" && "response" in error) {
+        return rejectWithValue(error.response?.data?.message || "Failed to create checkout session");
+      }
+      return rejectWithValue("Failed to create checkout session");
+    }
+  }
+);
 

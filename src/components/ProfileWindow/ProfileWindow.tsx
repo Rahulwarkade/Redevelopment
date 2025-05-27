@@ -19,7 +19,6 @@ const ProfileWindow: React.FC = () => {
   const address = "No address available"; // Placeholder
   const guidelines = user?.collaborationGuidelines || [];
   const banners: IBanner[] = user?.banners || [];
-
   return (
     <Container className="w-full h-full relative flex flex-col gap-[30px]">
       {/* Profile Header Section */}
@@ -55,7 +54,7 @@ const ProfileWindow: React.FC = () => {
         <Container className="w-full relative p-4 md:p-[30px] flex flex-col gap-5">
           <Container className="w-full relative flex gap-5 items-end">
             <Container className="w-[120px] h-[146px] rounded-[10px] overflow-hidden relative">
-              <Image src={ProfileImage.src} alt="Profile" fill />
+              <Image src={user?.profileImage || ProfileImage.src} alt="Profile" fill />
             </Container>
             <Container className="w-fit mb-4">
               <span className="flex items-center gap-3">

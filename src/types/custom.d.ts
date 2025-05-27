@@ -120,6 +120,7 @@ export interface IUser {
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   collaborationGuidelines?: any[]; // optional if may not exist
+  profileImage? : string;
   __v?: number;
   id: string;
   banners?: IBanner[];
