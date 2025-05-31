@@ -6,7 +6,7 @@ import { Icons } from "@/assets/icons";
 const PaymentSuccess = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const sessionId = searchParams?.get("session_id");
 
   // You can map session_id to plan name if needed
   const planName =

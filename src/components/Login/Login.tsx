@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 // import { Icons } from "@/assets/icons";
 import Link from "next/link";
 import { useAppDispatch } from "@/store/hooks";
-import { forgotPassword, signIn, verifyOtp } from "@/store/user/userAPI";
+import { signIn, verifyOtp } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { setAuth } from "@/store/user/authSlice"; // <-- import setAuth

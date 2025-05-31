@@ -1,4 +1,4 @@
-import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UpdatePasswordPayload, UpdateProfilePayload, UserProfile, VerifyOtpPayload } from "@/types/custom";
+import { AddBannerPayload, BannerFilters, SignInPayload, SignUpPayload, UpdatePasswordPayload, UpdateProfilePayload, VerifyOtpPayload } from "@/types/custom";
 import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 

@@ -41,7 +41,6 @@ const MyProfileWindow = () => {
     const {
       register,
       handleSubmit,
-      setValue,
       formState: { errors },
       reset,
     } = useForm<{
@@ -62,7 +61,11 @@ const MyProfileWindow = () => {
       axiosInstance.get("/static/genders").then((res) => {
         setGenders(res.data.data || []);
         if (profile?.gender) {
-          setSelectedGenderId(profile.gender?._id);
+          if (typeof profile.gender === "string") {
+            setSelectedGenderId(profile.gender);
+          } else if (typeof profile.gender === "object" && "_id" in profile.gender) {
+            setSelectedGenderId((profile.gender as any)._id);
+          }
         }
       });
     }, []);
@@ -75,7 +78,7 @@ const MyProfileWindow = () => {
         );
         if (found) setSelectedCountry(found);
       }
-    }, [countries, profile?.countryPhoneCode?._id]);
+    }, [countries]);
 
     // Reset form values when profile changes or cancel is clicked
     useEffect(() => {
@@ -84,14 +87,20 @@ const MyProfileWindow = () => {
         phoneNumber: profile?.phoneNumber || "",
         address: profile?.address || "",
       });
-      if (profile?.gender) setSelectedGenderId(profile.gender?._id);
+      if (profile?.gender) {
+        if (typeof profile.gender === "object" && "_id" in profile.gender) {
+          setSelectedGenderId((profile.gender as any)._id);
+        } else if (typeof profile.gender === "string") {
+          setSelectedGenderId(profile.gender);
+        }
+      }
       if (profile?.countryPhoneCode?._id && countries.length > 0) {
         const found = countries.find(
           (c) => c._id === profile?.countryPhoneCode?._id
         );
         if (found) setSelectedCountry(found);
       }
-    }, [isEditing, profile, countries, reset]);
+    }, [isEditing,  countries, reset]);
 
     const handleProfileUpdate = async (data: {
       fullName: string;
@@ -120,7 +129,13 @@ const MyProfileWindow = () => {
     const handleCancel = () => {
       setIsEditing(false);
       reset();
-      if (profile?.gender) setSelectedGenderId(profile.gender?._id);
+      if (profile?.gender) {
+        if (typeof profile.gender === "object" && "_id" in profile.gender) {
+          setSelectedGenderId((profile.gender as any)._id);
+        } else if (typeof profile.gender === "string") {
+          setSelectedGenderId(profile.gender);
+        }
+      }
       if (profile?.countryPhoneCode?._id && countries.length > 0) {
         const found = countries.find(
           (c) => c._id === profile?.countryPhoneCode?._id
@@ -511,7 +526,7 @@ const MyProfileWindow = () => {
         .catch((err) => {
           console.error("Plans error:", err);
         });
-    }, [dispatch]);
+    }, []);
 
     // Map planId or name to icon
     const getPlanIcon = (planId: string) => {

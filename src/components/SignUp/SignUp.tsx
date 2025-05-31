@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Button, Container, Image, Input, Text } from "@/components";
 import { signupIndicator, Logo } from "@/assets/Images";
 import { useForm } from "react-hook-form";
-import { Icons } from "@/assets/icons";
 import Link from "next/link";
 import { useAppDispatch } from "@/store/hooks";
 import { signUp } from "@/store/user/userAPI";
