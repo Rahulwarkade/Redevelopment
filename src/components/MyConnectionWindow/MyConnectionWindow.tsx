@@ -55,14 +55,14 @@ const MyConnectionWindow = () => {
     onInvite?: () => void;
     invited?: boolean;
   }) => (
-    <Container className="w-full p-4 relative flex justify-between items-center drop-shadow-sm border border-[#E1E2FF] rounded-[10px]">
+    <Container className="w-fitxx` p-4 relative flex justify-between items-center drop-shadow-sm border border-[#E1E2FF] rounded-[10px] md:max-xl:flex-wrap gap-1">
       {/* Profile Pic and Name and Designation */}
-      <Container className="flex items-center gap-4">
+      <Container className="flex items-center gap-4 max-lg:flex-wrap">
         <span className="size-[48px] rounded-full relative overflow-hidden">
           <Image src={ProfilePic.src} alt="pic" fill />
         </span>
         <span>
-          <Text className="text-sm md:text-base font-semibold text-[#27272E]">
+          <Text className="text-sm md:text-base font-semibold text-[#27272E] text-nowrap">
             {username}
           </Text>
             {isConnected ? (

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Popup, Container } from "@/components/common";
 import { useDispatch } from "react-redux";
@@ -22,6 +22,7 @@ const InterestForm: React.FC<InterestFormProps> = ({
   bannerId,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const cancleRef = useRef<HTMLDivElement | null>(null);
 
   const {
     register,
@@ -48,9 +49,22 @@ const InterestForm: React.FC<InterestFormProps> = ({
       console.error("Failed to mark interested:", error);
     }
   };
+  useEffect(() => {
+    const currentRef = cancleRef.current;
+    const handleCancle = (event: MouseEvent) => {
+      setShowInterestForm(false);
+      event.stopPropagation();
+    };
+    if (currentRef) {
+      currentRef.addEventListener("click", handleCancle);
+    }
 
+    return () => {
+      if (currentRef) currentRef?.removeEventListener("click", handleCancle);
+    };
+  });
   return (
-    <Popup setShowAddBanner={setShowInterestForm}>
+    <Popup>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-xl mx-auto bg-white border-2 border-violet-500 rounded-lg p-8"
@@ -80,7 +94,10 @@ const InterestForm: React.FC<InterestFormProps> = ({
           )}
         </Container>
 
-        <Container className="flex justify-center mt-6">
+        <Container className="flex justify-center mt-6 gap-1">
+          <Button type="button" variant="outline">
+                      <span ref={cancleRef}>Cancel</span>
+                    </Button>
           <Button type="submit" className="bg-[#4f46e5] text-white">
             Submit
           </Button>

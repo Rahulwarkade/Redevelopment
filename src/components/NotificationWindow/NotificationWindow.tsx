@@ -83,7 +83,7 @@ const NotificationWindow = () => {
     }
 
     return (
-      <Container key={index} className="px-[30px] py-4 border-b border-blue_e1e2ff flex gap-2">
+      <Container key={index} className="px-[30px] py-4 border-b border-blue_e1e2ff flex gap-2 border">
         <Image src={Pic.src} width={32} height={32} alt="user" className="rounded-full" />
         <Container className="flex-1">
           {type === "comment" && (

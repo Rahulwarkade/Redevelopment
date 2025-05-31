@@ -9,8 +9,12 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
+.hidescroller::-webkit-scrollbar{
+  display: none;
+}
 @theme {
   --color-white_fdfdff : #FDFDFF;
   --color-gray_787878: #787878;

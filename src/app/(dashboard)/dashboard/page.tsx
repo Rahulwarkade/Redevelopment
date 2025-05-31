@@ -4,7 +4,7 @@ import { Container, FeedWindow } from "@/components";
 const Page = () => {
   return (
     <Container
-    className="w-full"
+    className="w-full h-full"
     >
     <FeedWindow/>
     </Container>

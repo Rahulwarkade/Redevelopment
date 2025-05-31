@@ -4,7 +4,7 @@ import { Container, NotificationWindow } from "@/components";
 const Page = () => {
   return (
     <Container
-    className="w-full"
+    className="w-full h-full"
     >
     <NotificationWindow/>
     </Container>

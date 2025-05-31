@@ -84,8 +84,11 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
     );
   };
 
+  const getChatHandler = (id : string)=>{
+    setRecipientId(id);
+  }
   return (
-    <section className="w-full h-full relative bg-white_fdfdff rounded-[20px] border border-grey_e1e2ff flex overflow-hidden">
+    <section className="w-full h-full relative bg-white_fdfdf rounded-[20px] border border-grey_e1e2ff flex overflow-hidden">
       {/* Messages Container */}
       <Container className="w-full h-full md:max-w-[331px] p-4 relative md:border-r border-grey_e1e2ff flex flex-col gap-6">
         {/* Messaging and Search Bar  */}
@@ -182,7 +185,7 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
                   }
                   unreadCount={chat.unreadCount}
                   selected={recipientId === chat.user.id}
-                  onClick={() => setRecipientId(chat.user.id)}
+                  onClick={() => getChatHandler(chat.user.id)}
                 />
               );
             })
@@ -193,7 +196,7 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
       </Container>
 
       {/* Chat Container */}
-      <Container className="w-full relative hidden md:inline-block">
+      <Container className="w-full h-full relative hidden md:inline-block">
         {recipientId && (
           <ChatWindow recipientId={recipientId} username={selectedUsername} />
         )}

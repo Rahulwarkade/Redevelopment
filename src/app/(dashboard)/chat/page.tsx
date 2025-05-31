@@ -23,7 +23,7 @@ const Page = () => {
   }, [dispatch]);
 
   return (
-    <Container className="w-full">
+    <Container className="w-full h-full">
       <MyChatWindow id={null} chats={chats} />
     </Container>
   );

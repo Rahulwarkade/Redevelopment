@@ -5,11 +5,13 @@ interface ChatMessages {
   isRecieved: boolean;
   time?: string;
   children: React.ReactNode;
+  username: string;
 }
 const Chat: React.FC<ChatMessages> = ({
   isRecieved,
   time,
   children,
+  username,
 }) => {
   return (
     <Container
@@ -19,8 +21,9 @@ const Chat: React.FC<ChatMessages> = ({
     >
       {/* Profile Pic */}
       {isRecieved && (
-        <span className="p-1.5 rounded-full bg-[#7879f1] text-center flex justify-center items-center text-white text-xs md:text-sm font-bold">
-          OP
+        <span className="p-1.5 rounded-full bg-[#7879f1] text-center flex justify-center  items-center text-white text-xs md:text-sm font-bold">
+          {username.charAt(0).toUpperCase()}
+          {username.charAt(username.length - 1).toUpperCase()}
         </span>
       )}
       {/* Chat Message Container */}
@@ -39,7 +42,7 @@ const Chat: React.FC<ChatMessages> = ({
           </Text>
           {/* Time Stamp */}
           <span
-            className={`absolute text-[5px] md:text-[10px] text-black_333333 top-full mt-2.5 ${
+            className={`absolute text-[5px] md:text-[10px] text-black_333333 top-full mt-2.5 text-nowrap ${
               isRecieved ? "left-0" : "right-0"
             }`}
           >

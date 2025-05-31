@@ -1,5 +1,5 @@
-'use client';
-import React, { useEffect, useState } from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Chat, Container, Input, Text } from "@/components";
 import { getChatMessages, sendMessage } from "@/store/user/userAPI";
 import { useDispatch } from "react-redux";
@@ -18,36 +18,40 @@ interface Message {
   updatedAt: string;
 }
 
-const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ recipientId, username }) => {
+const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
+  recipientId,
+  username,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
   const currentUserId = useAppSelector((state) => state.user.profile?.data?.id);
   const [messages, setMessages] = useState<Message[]>([]);
   const [online, setOnline] = useState(false);
-
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
   // Register user on socket connect or when currentUserId changes
   useEffect(() => {
     if (!currentUserId) return;
 
-    const handleConnect = () => {
-      socket.emit("register", currentUserId);
-    };
 
-    socket.on("connect", handleConnect);
 
     // If already connected, register immediately
     if (socket.connected) {
       socket.emit("register", currentUserId);
     }
 
-    return () => {
-      socket.off("connect", handleConnect);
-    };
   }, [currentUserId]);
 
   useEffect(() => {
     if (recipientId) {
-      dispatch(getChatMessages({ otherUserId: recipientId, page: 1, limit: 20 }))
+      dispatch(
+        getChatMessages({ otherUserId: recipientId, page: 1, limit: 20 })
+      )
         .unwrap()
         .then((res: any) => {
           // If your API returns { messages: [...] }
@@ -64,7 +68,8 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
     const handleNewMessage = (msg: Message) => {
       // Only add if it's for this chat
       if (
-        (msg.sender._id === recipientId && msg.recipient._id === currentUserId) ||
+        (msg.sender._id === recipientId &&
+          msg.recipient._id === currentUserId) ||
         (msg.sender._id === currentUserId && msg.recipient._id === recipientId)
       ) {
         setMessages((prev) => [...prev, msg]);
@@ -73,11 +78,9 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
 
     // Listen for online status
     const handleUserOnline = ({ userId }: { userId: string }) => {
-      console.log("User online event:", userId, "recipientId:", recipientId);
       if (userId === recipientId) setOnline(true);
     };
     const handleUserOffline = ({ userId }: { userId: string }) => {
-      console.log("User offline event:", userId, "recipientId:", recipientId);
       if (userId === recipientId) setOnline(false);
     };
 
@@ -91,7 +94,25 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
       socket.off("user_offline", handleUserOffline);
     };
   }, [recipientId, currentUserId]);
-
+    // Add this handler inside your ChatWindow component
+  const handleTyping = () => {
+    if (currentUserId && recipientId) {
+      socket.emit("typing", { userId: currentUserId, recipientId });
+    }
+  };
+  useEffect(() => {
+    const handleTyping = ({ userId }: { userId: string }) => {
+      if (userId === recipientId) {
+        setIsTyping(true);
+        // Hide after 2 seconds of inactivity
+        setTimeout(() => setIsTyping(false), 2000);
+      }
+    };
+    socket.on("typing", handleTyping);
+    return () => {
+      socket.off("typing", handleTyping);
+    };
+  }, [recipientId]);
   const onSubmit = async (data: { content: string }) => {
     if (!data.content.trim()) return;
     try {
@@ -113,6 +134,7 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
       console.error("Send message error:", err);
     }
   };
+
 
   return (
     <Container className="w-full h-full relative flex flex-col justify-between pb-[15px]">
@@ -145,7 +167,11 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
               {username}
             </Text>
             <Container className="w-fit relative flex items-center gap-1">
-            <span className={`size-[8px] rounded-full ${online ? "bg-green-400" : "bg-gray-400"} relative`}></span>
+              <span
+                className={`size-[8px] rounded-full ${
+                  online ? "bg-green-400" : "bg-gray-400"
+                } relative`}
+              ></span>
               <Text className="text-[8px] md:text-xs font-medium text-blue_bababa">
                 {online ? "Online" : "Offline"}
               </Text>
@@ -161,20 +187,29 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
       </Container>
 
       {/* Chat Messages Section */}
-      <Container className="w-full relative px-[30px] py-6 flex flex-col gap-10">
+      <Container className="w-full h-full overflow-scroll overflow-x-hidden hidescroller relative px-[30px] py-6 flex flex-col gap-10">
         {/* Render chat messages */}
         {messages.length > 0 ? (
           messages.map((msg) => (
             <Chat
               key={msg._id}
               isRecieved={msg.sender._id !== currentUserId}
-              time={new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              time={new Date(msg.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              username={username}
             >
               {msg.content}
             </Chat>
           ))
         ) : (
           <span className="text-xs text-gray-400">No messages yet.</span>
+        )}
+        {/* This div is used for scrolling to bottom */}
+        <div ref={messagesEndRef} />
+        {isTyping && (
+          <span className="text-xs text-gray-400 italic">Typing...</span>
         )}
       </Container>
       {/* Chat Input */}
@@ -225,12 +260,15 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
           <Input
             {...register("content")}
             placeholder="Type your message"
+            onChange={(e) => {
+              handleTyping();
+              // Also call react-hook-form's onChange
+              register("content").onChange(e);
+            }}
             containerClassName="w-full h-[60px] rounded-[10px] bg-blue_f7f7fd flex relative"
             className="w-full h-full relative outline-none placeholder:text-sm md:placeholder:text-base placeholder:text-[#92929D]"
             rightIcon={
-              <div
-                className="pl-[30px] pr-[10px] py-[10px] rounded-[10px] bg-[#515DEF] flex items-center justify-end"
-              >
+              <div className="pl-[30px] pr-[10px] py-[10px] rounded-[10px] bg-[#515DEF] flex items-center justify-end">
                 <button type="submit">
                   <svg
                     width="24"
@@ -247,6 +285,7 @@ const ChatWindow: React.FC<{ recipientId: string, username : string }> = ({ reci
                 </button>
               </div>
             }
+            onKeyUp={handleTyping} // Add this line
           />
         </Container>
       </form>

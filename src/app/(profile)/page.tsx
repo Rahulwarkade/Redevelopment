@@ -7,7 +7,7 @@ const Profile = () => {
 
   return (
     <Container
-      className="w-full max-w-[1440px] h-screen max-h-[1024px]   mx-auto flex justify-center items-center"
+      className="w-full max-w-[1920px] h-screen"
     >
       <DeashboardLayout/>
     </Container>

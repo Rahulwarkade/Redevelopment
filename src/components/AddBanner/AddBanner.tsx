@@ -17,6 +17,7 @@ import {
   getTrafficUnits,
 } from "@/store/user/userAPI";
 import { toast } from "react-toastify";
+import RadioToggle from "../common/RadioToggle/RadioToggle";
 
 interface FormValues {
   name: string;
@@ -53,6 +54,7 @@ const AddBanner: React.FC<{
   const cancleRef = useRef<HTMLDivElement | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [trafficUnits, setTrafficUnits] = useState<TrafficUnit[]>([]);
+  const [urlStatus, setURLStatus] = useState<boolean>(true);
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("authToken="))
@@ -143,188 +145,265 @@ const AddBanner: React.FC<{
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const currentRef = cancleRef.current;
-    const handleCancle = (event : MouseEvent)=>{
+    const handleCancle = (event: MouseEvent) => {
       setShowAddBanner(false);
       event.stopPropagation();
-    }
-    if(currentRef){
-      currentRef.addEventListener('click',handleCancle);
+    };
+    if (currentRef) {
+      currentRef.addEventListener("click", handleCancle);
     }
 
-    return ()=>{
-      if(currentRef) currentRef?.removeEventListener('click',handleCancle);
-    }
-  })
+    return () => {
+      if (currentRef) currentRef?.removeEventListener("click", handleCancle);
+    };
+  });
   return (
-    <Popup setShowAddBanner={setShowAddBanner}>
+    <Popup>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-2xl mx-auto bg-white rounded-xl p-6 shadow-lg border"
+        className="w-full max-w-[830px] mx-auto rounded-[4px] overflow-hidden"
       >
-        <h2 className="text-2xl font-semibold text-center text-[#4B0082] mb-6">
-          Create Your Banner
-        </h2>
+        <Container className="w-full h-10 md:h-20 bg-gradient-to-r from-[#9181F4] to-[#5038ED] flex justify-center items-center">
+          <h2 className="text-[26px] font-semibold text-white">
+            Create Your Banner
+          </h2>
+        </Container>
 
-        <Container className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Controller
-            name="name"
-            control={control}
-            rules={{ required: "Name is required" }}
-            render={({ field }) => (
-              <Input
-                label="Name"
-                placeholder="AI Expert Blog"
-                error={errors.name?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="websiteUrl"
-            control={control}
-            rules={{ required: "Website URL is required" }}
-            render={({ field }) => (
-              <Input
-                label="Website URL"
-                placeholder="www.chatgpt.com"
-                error={errors.websiteUrl?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="category"
-            control={control}
-            rules={{ required: "Category is required" }}
-            render={({ field }) => (
-              <Select
-                label="Category"
-                options={categories.map((cat) => ({
-                  label: cat.name,
-                  value: cat._id,
-                }))}
-                {...field}
-              />
-            )}
-          />
-          <Container className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700">Is Paid</label>
-            <Container className="flex gap-4 mt-2">
-              <Controller
-                name="isPaid"
-                control={control}
-                rules={{ required: "Is Paid is required" }}
-                render={({ field }) => (
-                  <>
-                    <Radio
-                      label="Yes"
-                      checked={field.value}
-                      onChange={() => field.onChange(true)}
-                    />
-                    <Radio
-                      label="No"
-                      checked={!field.value}
-                      onChange={() => field.onChange(false)}
-                    />
-                  </>
-                )}
-              />
-            </Container>
-            {errors.isPaid && (
-              <span className="text-xs text-red-500">
-                {errors.isPaid.message}
-              </span>
-            )}
-          </Container>
-
-          {isPaid && (
+        <Container className="w-full relative bg-white px-6 py-5 grid gap-5">
+          {/* First row */}
+          <Container className="grid md:grid-cols-3 gap-5">
+            {/* Name Container */}
             <Controller
-              name="amount"
+              name="name"
               control={control}
-              rules={{ required: "Amount is required" }}
+              rules={{ required: "Name is required" }}
               render={({ field }) => (
                 <Input
-                  label="Amount"
-                  type="number"
-                  placeholder="$100"
-                  error={errors.amount?.message}
+                  label="Name"
+                  placeholder="AI Expert Blog"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  error={errors.name?.message}
                   {...field}
                 />
               )}
             />
-          )}
 
-          <Controller
-            name="dr"
-            control={control}
-            rules={{ required: "DR is required" }}
-            render={({ field }) => (
-              <Input
-                label="Metrics (DR)"
-                placeholder="80"
-                error={errors.dr?.message}
-                {...field}
+            {/* Website URL */}
+            <Controller
+              name="websiteUrl"
+              control={control}
+              rules={{ required: "Website URL is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Website URL"
+                  placeholder="www.chatgpt.com"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  error={errors.websiteUrl?.message}
+                  {...field}
+                />
+              )}
+            />
+            {/* Category input Container */}
+            <Controller
+              name="category"
+              control={control}
+              rules={{ required: "Category is required" }}
+              render={({ field }) => (
+                <Select
+                  label="Category"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  options={categories.map((cat) => ({
+                    label: cat.name,
+                    value: cat._id,
+                  }))}
+                  {...field}
+                />
+              )}
+            />
+          </Container>
+
+          {/* Second Row */}
+          <Container className="grid md:grid-cols-2">
+            {/* isPaid yes and NO */}
+            <Container className="flex items-center gap-[52px] pt-4">
+              <label className="text-base text-[#747B85] text-nowrap">
+                Is Paid
+              </label>
+              <Container className="flex gap-8">
+                <Controller
+                  name="isPaid"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <Container className="flex gap-8">
+                        <label className="flex items-center gap-2">
+                          <div
+                            className={`min-w-[30px] min-h-[30px] rounded-full flex justify-center items-center ${
+                              isPaid
+                                ? "bg-[#6956E5]"
+                                : "bg-white border border-[#B0B0B0]"
+                            }`}
+                            onClick={() => {
+                              field.onChange(true);
+                            }}
+                          >
+                            <div
+                              // name="isPaid"
+                              // checked={field.value === true}
+                              // onChange={() => field.onChange(true)}
+                              className="w-4 h-4 rounded-full bg-white outline-none"
+                            />
+                          </div>
+                          <span className="text-base text-[#747B85]">Yes</span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <div
+                            className={`min-w-[30px] min-h-[30px] rounded-full flex justify-center items-center ${
+                              isPaid
+                                ? "border border-[#B0B0B0] bg-white"
+                                : " bg-[#6956E5]"
+                            }`}
+                            onClick={() => {
+                              field.onChange(false);
+                            }}
+                          >
+                            <div
+                              // name="isPaid"
+                              // checked={field.value === false}
+                              // onChange={() => setPaidStatus(false)}
+                              className="w-4 h-4 rounded-full bg-white outline-none"
+                            />
+                          </div>
+                          <span className="text-base text-[#747B85]">No</span>
+                        </label>
+                      </Container>
+                    );
+                  }}
+                />
+              </Container>
+              {errors.isPaid && (
+                <span className="text-xs text-red-500">
+                  {errors.isPaid.message}
+                </span>
+              )}
+            </Container>
+            {/* Amount input container */}
+            {isPaid && (
+              <Controller
+                name="amount"
+                control={control}
+                rules={{ required: "Amount is required" }}
+                render={({ field }) => (
+                  <Input
+                    // label="Amount"
+                    type="number"
+                    placeholder="Amount"
+                    className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                    labelClassName="text-base text-[#747B85]"
+                    error={errors.amount?.message}
+                    {...field}
+                  />
+                )}
               />
             )}
-          />
-          <Controller
-            name="da"
-            control={control}
-            rules={{ required: "DA is required" }}
-            render={({ field }) => (
-              <Input
-                label="Metrics (DA)"
-                placeholder="40"
-                error={errors.da?.message}
-                {...field}
+          </Container>
+
+          {/* Third Row */}
+          <Container className="grid md:grid-cols-4 gap-2">
+            {/* Matrics (DR) */}
+            <Controller
+              name="dr"
+              control={control}
+              rules={{ required: "DR is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Metrics (DR)"
+                  placeholder="80"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  error={errors.dr?.message}
+                  {...field}
+                />
+              )}
+            />
+            {/* Matrics (DA) */}
+            <Controller
+              name="da"
+              control={control}
+              rules={{ required: "DA is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Metrics (DA)"
+                  placeholder="40"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  error={errors.da?.message}
+                  {...field}
+                />
+              )}
+            />
+            {/* Matrics (PA) */}
+            <Controller
+              name="pa"
+              control={control}
+              rules={{ required: "PA is required" }}
+              render={({ field }) => (
+                <Input
+                  label="Metrics (PA)"
+                  placeholder="40"
+                  className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                  labelClassName="text-base text-[#747B85]"
+                  error={errors.pa?.message}
+                  {...field}
+                />
+              )}
+            />
+            {/* Trafic input Container */}
+            <Container className="flex gap-1">
+              {/* Traffic Value input */}
+              <Controller
+                name="trafficValue"
+                control={control}
+                rules={{ required: "Traffic value is required" }}
+                render={({ field }) => (
+                  <Input
+                    label="Traffic Value"
+                    placeholder="10K"
+                    className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                    labelClassName="text-base text-[#747B85] text-nowrap"
+                    error={errors.trafficValue?.message}
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
-          <Controller
-            name="pa"
-            control={control}
-            rules={{ required: "PA is required" }}
-            render={({ field }) => (
-              <Input
-                label="Metrics (PA)"
-                placeholder="40"
-                error={errors.pa?.message}
-                {...field}
+              {/* Traffic Unit */}
+              <Controller
+                name="trafficUnit"
+                control={control}
+                rules={{ required: "Traffic unit is required" }}
+                render={({ field }) => (
+                  <Select
+                    label="Traffic Unit"
+                    className="border border-[#DEDEDE] rounded-[6px] placeholder:text-base placeholder:text-[#575757]"
+                    labelClassName="text-base text-[#747B85] text-nowrap"
+                    options={trafficUnits.map((unit) => ({
+                      label: unit.name,
+                      value: unit._id,
+                    }))}
+                    // error={errors.trafficUnit?.message}
+                    {...field}
+                  />
+                )}
               />
-            )}
-          />
-          <Controller
-            name="trafficValue"
-            control={control}
-            rules={{ required: "Traffic value is required" }}
-            render={({ field }) => (
-              <Input
-                label="Traffic Value"
-                placeholder="10K"
-                error={errors.trafficValue?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="trafficUnit"
-            control={control}
-            rules={{ required: "Traffic unit is required" }}
-            render={({ field }) => (
-              <Select
-                label="Traffic Unit"
-                options={trafficUnits.map((unit) => ({
-                  label: unit.name,
-                  value: unit._id,
-                }))}
-                // error={errors.trafficUnit?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
+            </Container>
+          </Container>
+
+          {/* <Controller
             name="gp"
             control={control}
             render={({ field }) => (
@@ -347,53 +426,91 @@ const AddBanner: React.FC<{
                 {...field}
               />
             )}
-          />
+          /> */}
+          {/* Fourth Row */}
+          {/* Radios Container */}
+          <Container className="grid md:grid-cols-4">
+            {/* Guest Post */}
+            <Controller
+              name="isGuestPost"
+              control={control}
+              render={({ field }) => (
+                <RadioToggle
+                  label="Guest Post"
+                  checked={!!field.value}
+                  onChange={(val) => field.onChange(val)}
+                  labelClassName="text-base text-[#747B85] text-nowrap"
+                />
+              )}
+            />
+            <Controller
+              name="isExchangePost"
+              control={control}
+              render={({ field }) => (
+                <RadioToggle
+                  label="Exchange Post"
+                  checked={!!field.value}
+                  onChange={(val) => field.onChange(val)}
+                  labelClassName="text-base text-[#747B85] text-nowrap"
+                />
+              )}
+            />
+            {/* isPublic radio */}
+            <Container className="flex gap-8 col-span-2">
+              <label className="text-base text-[#747B85] text-nowrap">
+                Website URL
+              </label>
+              <Controller
+                name="isPublic"
+                control={control}
+                render={({ field }) => (
+                  <Container className="flex gap-8">
+                    <label className="flex items-center gap-2">
+                      <div
+                        className={`min-w-[30px] min-h-[30px] rounded-full flex justify-center items-center ${
+                          urlStatus
+                            ? "bg-[#6956E5]"
+                            : "bg-white border border-[#B0B0B0]"
+                        }`}
+                        onClick={() => {
+                          field.onChange(true);
+                          setURLStatus(true);
+                        }}
+                      >
+                        <div className="w-4 h-4 rounded-full bg-white outline-none" />
+                      </div>
+                      <span className="text-base text-[#747B85]">Public</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <div
+                        className={`min-w-[30px] min-h-[30px] rounded-full flex justify-center items-center ${
+                          urlStatus
+                            ? "border border-[#B0B0B0] bg-white"
+                            : " bg-[#6956E5]"
+                        }`}
+                        onClick={() => {
+                          field.onChange(false);
+                          setURLStatus(false);
+                        }}
+                      >
+                        <div className="w-4 h-4 rounded-full bg-white outline-none" />
+                      </div>
+                      <span className="text-base text-[#747B85]">Private</span>
+                    </label>
+                  </Container>
+                )}
+              />
+            </Container>
+          </Container>
         </Container>
 
-        <Container className="flex items-center gap-6 mt-6 flex-wrap">
-          <Controller
-            name="isGuestPost"
-            control={control}
-            render={({ field }) => (
-              <Toggle
-                label="Guest Post"
-                checked={field.value}
-                onChange={field.onChange}
-                // error={errors.isGuestPost?.message}
-              />
-            )}
-          />
-          <Controller
-            name="isExchangePost"
-            control={control}
-            render={({ field }) => (
-              <Toggle
-                label="Exchange Post"
-                checked={field.value}
-                onChange={field.onChange}
-                // error={errors.isExchangePost?.message}
-              />
-            )}
-          />
-          <Controller
-            name="isPublic"
-            control={control}
-            render={({ field }) => (
-              <Toggle
-                label="Public"
-                checked={field.value}
-                onChange={field.onChange}
-                // error={errors.isPublic?.message}
-              />
-            )}
-          />
-        </Container>
-
-        <Container className="flex justify-end gap-4 mt-8">
+        <Container className="flex justify-end items-center gap-4 w-full bg-[#F3F3F3] h-[35px] md:h-[72px] p-5 backdrop-blur-2xl">
           <Button type="button" variant="outline">
             <span ref={cancleRef}>Cancel</span>
           </Button>
-          <Button type="submit">Publish Banner</Button>
+          <Button type="submit" className="bg-[#515DEF] text-white">
+            Publish Banner
+          </Button>
         </Container>
       </form>
     </Popup>

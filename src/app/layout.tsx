@@ -16,7 +16,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en" className={dmSans.variable}>
-      <body className={`antialiased`}>
+      <body className={`antialiased `}>
         <ReduxProvider>
           {children}
           <ToastContainer position="top-right" autoClose={3000} />

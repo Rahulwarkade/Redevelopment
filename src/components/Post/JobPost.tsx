@@ -62,7 +62,7 @@ const JobPost = ({ banner, setUpdate }: { banner: Banner, setUpdate : React.Disp
           <Container className="w-full relative flex gap-2 items-center">
             <Text
               variant="h3"
-              className="text-base md:text-xl text-black_27272e font-semibold capitalize"
+              className="text-base md:text-xl text-black_27272e font-semibold capitalize line-clamp-2"
             >
               {name || "Untitled Job"}
             </Text>

@@ -1,13 +1,12 @@
+// socket.js
 "use client";
 
 import { io } from "socket.io-client";
 
-let socket;
+const URL = "http://localhost:5001";
 
-if (!socket) {
-  socket = io("http://localhost:5001", {
-    autoConnect: false, // Prevent auto connection on import
-  });
-}
+const socket = io(URL, {
+  autoConnect: false, // Prevents auto-connection until you call `connect()`
+});
 
 export { socket };

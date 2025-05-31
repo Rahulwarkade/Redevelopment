@@ -167,7 +167,7 @@ const MyProfileWindow = () => {
                 <Input
                   label="Full Name"
                   labelClassName="text-[#747B85] text-sm md:text-base font-normal text-nowrap pl-[6px]"
-                  placeholder="John Doe"
+                  placeholder="Enter your name..."
                   containerClassName="w-full"
                   className="w-full h-[60px] rounded-[6px] border border-[#DEDEDE]"
                   readOnly={!isEditing}

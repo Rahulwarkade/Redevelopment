@@ -1,7 +1,7 @@
 import  signupIndicator  from  "./SignUp.webp";
 import Logo from "./Logo.svg"
 import Pic from "./pic.png"
-import ProfileImage from "./profileImage.jpg"
+import ProfileImage from "./pic.png"
 import PetalBg from "./PetalBg.webp";
 import NewYearParty from "./NewYearParty.svg";
 import LoginImg from "./LoginImg.webp";
@@ -11,7 +11,7 @@ import SetPasswordImg from "./SetPasswordImg.webp";
 import TreeIlustration from "./TreeIlustration.svg";
 import PlantIlustration from "./PlantIlustration.svg";
 import BoyIlustration from "./BoyIlustration.svg";
-import ProfilePic from "./ProfilePic.jpg";
+import ProfilePic from "./ProfilePic.png";
 import ModernWoman from "./ModernWoman.webp";
 
 export {
