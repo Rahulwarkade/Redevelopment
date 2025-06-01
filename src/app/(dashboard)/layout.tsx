@@ -13,13 +13,7 @@ const DashboardLayout = ({
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('authToken='))
-      ?.split('=')[1];
-    if (token) {
-      dispatch(getProfile(token));
-    }
+      dispatch(getProfile());
   }, [dispatch]);
   // Connect socket and chat though 
   useEffect(()=>{
@@ -35,19 +29,19 @@ const DashboardLayout = ({
   },[])
   return (
     <>
-      <section className="min-w-screen h-screen max-w-[1920px] relative md:px-[7%] md:py-[20px] flex lg:grid grid-cols-4 gap-[30px] justify-center items-center mx-auto overflow-hidden">
+      <section className="min-w-screen md:min-h-screen max-w-[1920px] relative md:px-[7%] md:py-[20px] flex lg:grid grid-cols-4 gap-[30px] justify-center items-center mx-auto overflow-hidden">
         {/* Side Nav Bar */}
-        <Container className="w-fit md:w-full h-full  max-md:p-[4%] relative hidden md:inline-block">
+        <Container className="w-fit lg:w-full h-full  max-md:p-[4%] relative hidden md:inline-block">
           <SideBar />
         </Container>
         {/* Nav Bar and Dashboard Main Content */}
-        <Container className="w-full h-full flex  flex-col gap-2 md:gap-5 col-span-3 relative overflow-hidden">
+        <Container className="w-full h-full flex  flex-col  md:gap-5 col-span-3 relative overflow-hidden">
           {/* Nav Bar */}
           <Container className="w-full h-fit">
             <NavBar />
           </Container>
           {/* Dashboard Content */}
-          <Container className="w-full h-full overflow-auto max-md:p-[4%]">
+          <Container className="w-full h-full overflow-auto max-md:px-[4%] ">
             {children}
           </Container>
         </Container>

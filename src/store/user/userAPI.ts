@@ -56,11 +56,9 @@ export const signUp = createAsyncThunk(
 
 export const getProfile = createAsyncThunk(
   "user/getProfile",
-  async (token: string, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`users/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.get(`users/profile`);
       return response.data;
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
@@ -400,7 +398,6 @@ export const sendConnectionRequest = createAsyncThunk(
   async ({recipientId}:{recipientId: string}, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("connections/", { recipientId  });
-      console.log(response)
       return response.data;
     } catch (error: any) {
       return rejectWithValue(

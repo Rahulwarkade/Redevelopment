@@ -4,19 +4,35 @@ import { Container, Text, Input } from "@/components/common";
 import { ChatWindow } from "@/components";
 import { Chat } from "@/types/custom";
 
-const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
+const MyChatWindow: React.FC<{ id: string | null; chats: Chat[], setChats : React.Dispatch<React.SetStateAction<Chat[]>> }> = ({
   id,
   chats,
+  setChats,
 }) => {
+  
   const [recipientId, setRecipientId] = useState<string | null>(id ?? null);
-
+  const [isChatSelected,setIsChatSelected] = useState<boolean>(recipientId?true:false);
   // Update recipientId if the route id changes
   useEffect(() => {
     if (id) {
       setRecipientId(id);
     }
   }, [id]);
-
+const handleMessagesRead = (recipientId: string, messageIds: string[]) => {
+  setChats((prevChats) =>
+    prevChats.map((chat) =>
+      chat.user.id === recipientId
+        ? {
+            ...chat,
+            unreadCount: Math.max(
+              0,
+              chat.unreadCount - messageIds.length
+            ),
+          }
+        : chat
+    )
+  );
+};
   // Find the selected chat's username
   const selectedChat = chats.find((chat) => chat.user.id === recipientId);
   const selectedUsername = selectedChat?.user.username ?? "";
@@ -86,11 +102,12 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
 
   const getChatHandler = (id : string)=>{
     setRecipientId(id);
+    setIsChatSelected(true);
   }
   return (
-    <section className="w-full h-full relative bg-white_fdfdf rounded-[20px] border border-grey_e1e2ff flex overflow-hidden">
+    <section className="w-full h-full relative bg-white_fdfdf rounded-[20px] border border-grey_e1e2ff flex overflow-hidden ">
       {/* Messages Container */}
-      <Container className="w-full h-full md:max-w-[331px] p-4 relative md:border-r border-grey_e1e2ff flex flex-col gap-6">
+      <Container className={`w-full h-full md:max-w-[331px] p-4 relative md:border-r border-grey_e1e2ff flex flex-col gap-6 ${isChatSelected ? "max-md:hidden" : "flex"}`}>
         {/* Messaging and Search Bar  */}
         <Container className="w-full relative flex flex-col gap-3">
           {/* Messaging and Chat Icon */}
@@ -167,7 +184,7 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
         </Container>
 
         {/* Profile Section container */}
-        <Container className="w-full relative">
+        <Container className={`w-full relative`}>
           {/* Render Profile for each chat */}
           {chats.length > 0 ? (
             chats.map((chat) => {
@@ -196,9 +213,10 @@ const MyChatWindow: React.FC<{ id: string | null; chats: Chat[] }> = ({
       </Container>
 
       {/* Chat Container */}
-      <Container className="w-full h-full relative hidden md:inline-block">
+      <Container className={`w-full h-full relative  ${!isChatSelected?"max-md:hidden": "md:inline-block"}`}>
         {recipientId && (
-          <ChatWindow recipientId={recipientId} username={selectedUsername} />
+          <ChatWindow recipientId={recipientId} username={selectedUsername} setIsChatSelected={setIsChatSelected}   
+          onMessagesRead={handleMessagesRead}/>
         )}
       </Container>
     </section>

@@ -7,6 +7,8 @@ import { UserState } from '@/types/custom';
 const initialState: UserState = {
     profile: null,
     token: null,
+    socketRecipientId : null,
+    myNotificationCount : null,
     status: 'idle',
     error: null,
 };
@@ -18,9 +20,17 @@ export const userSlice = createSlice({
         clearUser: (state) => {
             state.profile = null;
             state.token = null;
+            state.socketRecipientId = null;
+            state.myNotificationCount = null;
             state.error = null;
             state.status = "idle";
         },
+        addCurrentSocket : (state,action)=>{
+            state.socketRecipientId = action.payload;
+        },
+        increaseNotification : (state,action)=>{
+            state.myNotificationCount = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -56,7 +66,8 @@ export const userSlice = createSlice({
             })
             .addCase(getProfile.fulfilled, (state, action) => {
                 state.status = "succeeded";
-                state.profile = action.payload;
+                state.token = action.payload?.token ?? null;
+                state.profile = action.payload ?? null;
             })
             .addCase(getProfile.rejected, (state, action) => {
                 state.status = "failed";
@@ -83,5 +94,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const { clearUser } = userSlice.actions;
+export const { clearUser, addCurrentSocket, increaseNotification } = userSlice.actions;
 export default userSlice.reducer;

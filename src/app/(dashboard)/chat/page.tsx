@@ -5,10 +5,11 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { getChats } from "@/store/user/userAPI";
 import { Chat } from "@/types/custom";
+import { useAppSelector } from "@/store/hooks";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
- 
+  const id : string | null = useAppSelector(state=>state.user.socketRecipientId);
   const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
@@ -20,11 +21,12 @@ const Page = () => {
       .catch((err: any) => {
         console.error("Chats API error:", err);
       });
-  }, [dispatch]);
+  }, [dispatch, id]);
+
 
   return (
     <Container className="w-full h-full">
-      <MyChatWindow id={null} chats={chats} />
+      <MyChatWindow id={id} chats={chats} setChats={setChats} />
     </Container>
   );
 };

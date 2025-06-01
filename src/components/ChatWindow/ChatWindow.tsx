@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Chat, Container, Input, Text } from "@/components";
+import { Button, Chat, Container, Image, Input, Text } from "@/components";
 import { getChatMessages, sendMessage } from "@/store/user/userAPI";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { useForm } from "react-hook-form";
 import { useAppSelector } from "@/store/hooks";
 import { socket } from "@/app/socket"; // Adjust path if needed
+import { Icons } from "@/assets/icons";
 
 interface Message {
   _id: string;
@@ -17,10 +18,17 @@ interface Message {
   createdAt: string;
   updatedAt: string;
 }
-
-const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
+interface ChatWindowProps {
+  recipientId: string;
+  username: string;
+  setIsChatSelected: React.Dispatch<React.SetStateAction<boolean>>;
+  onMessagesRead?: (recipientId: string, messageIds: string[]) => void; // <-- add this
+}
+const ChatWindow: React.FC<ChatWindowProps> = ({
   recipientId,
   username,
+  setIsChatSelected,
+  onMessagesRead,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { register, handleSubmit, reset } = useForm<{ content: string }>();
@@ -36,9 +44,27 @@ const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
   }, [messages]);
   // Register user on socket connect or when currentUserId changes
   useEffect(() => {
+  const handleMessagesRead = ({ messageIds}: { messageIds: string[];}) => {
+    setMessages((prev) =>
+      prev.map((msg) =>
+        messageIds.includes(msg._id)
+          ? { ...msg, isRead: true }
+          : msg
+      )
+    );
+    // Notify parent to update unreadCount
+    if (onMessagesRead) {
+      onMessagesRead(recipientId, messageIds);
+    }
+  };
+  socket.on("messages_read", handleMessagesRead);
+  return () => {
+    socket.off("messages_read", handleMessagesRead);
+  };
+}, [recipientId, onMessagesRead]);
+
+  useEffect(() => {
     if (!currentUserId) return;
-
-
 
     // If already connected, register immediately
     if (socket.connected) {
@@ -93,7 +119,7 @@ const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
       socket.off("user_online", handleUserOnline);
       socket.off("user_offline", handleUserOffline);
     };
-  }, [recipientId, currentUserId]);
+  }, []);
     // Add this handler inside your ChatWindow component
   const handleTyping = () => {
     if (currentUserId && recipientId) {
@@ -113,6 +139,7 @@ const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
       socket.off("typing", handleTyping);
     };
   }, [recipientId]);
+
   const onSubmit = async (data: { content: string }) => {
     if (!data.content.trim()) return;
     try {
@@ -136,10 +163,20 @@ const ChatWindow: React.FC<{ recipientId: string; username: string }> = ({
   };
 
 
+
   return (
     <Container className="w-full h-full relative flex flex-col justify-between pb-[15px]">
       {/* Chat Header Section */}
       <Container className="w-full h-[80px] relative border-b border-grey_dfdfdf bg-white flex items-center px-4">
+        <span className={`w-[40px] mr-2`} onClick={()=>setIsChatSelected(false)}>
+          <Image
+          src={Icons.BackIcon}
+          alt="back"
+          width={24}
+          height={24}
+          className="object-contain rotate-180"
+        />
+        </span>
         {/* Profile container */}
         <Container className="w-full h-full relative flex items-center gap-3">
           {/* Star Icon */}

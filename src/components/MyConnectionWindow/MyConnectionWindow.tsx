@@ -5,13 +5,18 @@ import { ProfilePic } from "@/assets/Images";
 import { getConnections, getRecommendedConnections, sendConnectionRequest } from "@/store/user/userAPI";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
-import Link from "next/link";
+import { addCurrentSocket } from "@/store/user/userSlice";
+import { useRouter } from "next/navigation";
+import { socket } from "@/app/socket";
+import { useAppSelector } from "@/store/hooks";
 
 const MyConnectionWindow = () => {
   const dispatch = useDispatch<AppDispatch>();
+    const currentUserId = useAppSelector((state) => state.user.profile?.data?.id);
   const [connections, setConnections] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
   const [invitedIds, setInvitedIds] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(getConnections({ status: "accepted" }))
@@ -31,16 +36,26 @@ const MyConnectionWindow = () => {
       .catch((err: any) => {
         console.error("Connections API error:", err);
       });
-  }, [dispatch]);
+  }, [dispatch,invitedIds]);
 
   const handleInvite = async (recipientId: string) => {
     try {
       await dispatch(sendConnectionRequest({ recipientId })).unwrap();
       setInvitedIds((prev) => [...prev, recipientId]);
+      // Emit real-time connection request event
+      socket.emit("connection_request", {
+        userId : currentUserId,
+        recipientId,
+      });
     } catch (err) {
       console.error("Invite error:", err);
     }
   };
+
+  const openChatHandler = (id : string )=>{
+      dispatch(addCurrentSocket(id));
+      router.push("/chat");
+  }
 
   const ConnectionFeed = ({
     id,
@@ -77,11 +92,13 @@ const MyConnectionWindow = () => {
         </span>
       </Container>
       {isConnected ? (
-        <Link href={`/chat/${id}`}> 
-          <Button className="px-[10px] py-1 rounded-[4px] bg-[#515DEF] text-white text-xs md:text-sm font-medium cursor-pointer">
+        // <Link href={`/chat/${id}`}> 
+          <Button className="px-[10px] py-1 rounded-[4px] bg-[#515DEF] text-white text-xs md:text-sm font-medium cursor-pointer"
+          onClick={()=>openChatHandler(id)}
+          >
             Message
           </Button>
-        </Link>
+        // </Link>
       ) : (
         <Button
           className={`px-[10px] py-1 rounded-[4px] bg-[#515DEF] text-white text-xs md:text-sm font-medium ${!invited && "cursor-pointer"}`}

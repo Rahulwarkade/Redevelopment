@@ -17,6 +17,7 @@ import ProIcon from "./ProIcon.svg";
 import EnterpriseIcon from "./EnterpriseIcon.svg";
 import Menu from "./menu.svg";
 import CloseIcon from "./closeIcon.svg";
+import BackIcon from "./back.svg"
 export const Icons = {
   Menu,
   View,
@@ -37,4 +38,5 @@ export const Icons = {
   Upload,
   Boy,
   Woman,
+  BackIcon
 };

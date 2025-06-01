@@ -21,7 +21,7 @@ const Chat: React.FC<ChatMessages> = ({
     >
       {/* Profile Pic */}
       {isRecieved && (
-        <span className="p-1.5 rounded-full bg-[#7879f1] text-center flex justify-center  items-center text-white text-xs md:text-sm font-bold">
+        <span className="p-1.5 rounded-full bg-[#7879f1] text-center md:flex justify-center  items-center text-white text-xs md:text-sm font-bold hidden">
           {username.charAt(0).toUpperCase()}
           {username.charAt(username.length - 1).toUpperCase()}
         </span>
@@ -52,7 +52,7 @@ const Chat: React.FC<ChatMessages> = ({
       </Container>
 
       {!isRecieved && (
-        <span className="p-1.5 rounded-full bg-grey_bdbdbd flex justify-center items-center">
+        <span className="p-1.5 rounded-full bg-grey_bdbdbd md:flex justify-center items-center hidden">
           <svg
             width="20"
             height="20"

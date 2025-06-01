@@ -99,6 +99,8 @@ export interface UpdateProfileThunkArg {
 interface UserState {
   profile: UserProfile | null;
   token: string | null;
+  socketRecipientId : null;
+  myNotificationCount : null | number;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }

@@ -64,7 +64,7 @@ const NavBar: React.FC = () => {
             <Text className="text-black_23262f text-lg md:text-[26px] font-semibold">
               {user?.fullName
                 ? `${getGreeting()} ${user.fullName.trim()}`
-                : getGreeting()}
+                : user?.username ? `${getGreeting()} ${user.username.trim()}` : getGreeting()}
             </Text>
             <Text className="text-black_828282 text-sm md:text-base">
               Hope you have a good day

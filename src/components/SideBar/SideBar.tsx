@@ -14,6 +14,7 @@ import {
 } from "@/assets/icons/svgIcons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
 
 interface NavBarType {
   isSidebar? : boolean;
@@ -21,6 +22,7 @@ interface NavBarType {
   isNavBar? : boolean
 }
 const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
+  const notification : null | number = useAppSelector(state=>state.user.myNotificationCount);
   const pathname = usePathname();
   const router = useRouter();
   const parts = pathname ? pathname.split("/") : [];
@@ -112,12 +114,15 @@ const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
             },
             {
               routeIcon: (
-                <BellIcon
-                  strokeColor={`${
-                    "notification" == activeNav ? "#6956E5" : "#878787"
-                  }`}
-                  className="size-3 md:size-6"
-                />
+                <div className="relative size-3 md:size-6">
+                  {notification!=null && <span className="absolute left-full bottom-full bg-[#FF3E46] w-4 md:w-[20px] h-[18px] md:h-[22px] text-xs text-white text-center flex justify-center items-center rounded-[4px]">{notification}</span>}
+                  <BellIcon
+                    strokeColor={`${
+                      "notification" == activeNav ? "#6956E5" : "#878787"
+                    }`}
+                    className="size-3 md:size-6"
+                  />
+                </div>
               ),
               routeName: "My Notification",
               routeSlug: "/notification",
