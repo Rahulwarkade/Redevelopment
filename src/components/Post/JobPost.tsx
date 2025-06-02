@@ -55,14 +55,14 @@ const JobPost = ({ banner, setUpdate }: { banner: Banner, setUpdate : React.Disp
       {showInterestForm && (
         <Interested setShowInterestForm={setShowInterestForm} bannerId={bannerId} setUpdate={setUpdate} />
       )}
-      <Container className="w-full h-full relative rounded-[10px] border border-gray_dedede drop-shadow-sm backdrop-blur-sm overflow-hidden">
+      <Container className="w-full h-full relative flex flex-col rounded-[10px] border border-gray_dedede drop-shadow-sm backdrop-blur-sm overflow-hidden">
         {/* Main Container */}
         <Container className="w-full relative p-4">
           {/* Title and Tag */}
           <Container className="w-full relative flex gap-2 items-center">
             <Text
               variant="h3"
-              className="text-base md:text-xl text-black_27272e font-semibold capitalize line-clamp-2"
+              className="text-base md:text-xl text-black_27272e font-semibold capitalize line-clamp-1"
             >
               {name || "Untitled Job"}
             </Text>
@@ -171,7 +171,7 @@ const JobPost = ({ banner, setUpdate }: { banner: Banner, setUpdate : React.Disp
         </Container>
 
         {/* Footer Info */}
-        <Container className="w-full flex justify-between items-center px-4 py-[7px] bg-gray_eef2fd border-t border-[#b9c1c1]">
+        <Container className="w-full h-full flex justify-between items-center px-4 py-[7px] bg-gray_eef2fd border-t border-[#b9c1c1]">
           <Container className="w-fit">
             <Text className="text-xs md:text-sm text-black_425466">
               Traffic:{" "}

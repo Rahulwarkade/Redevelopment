@@ -11,7 +11,10 @@ body {
   box-sizing: border-box;
   overflow-x: hidden;
 }
-
+main{
+  width: 100vw;
+  height: 100vh;
+}
 .hidescroller::-webkit-scrollbar{
   display: none;
 }

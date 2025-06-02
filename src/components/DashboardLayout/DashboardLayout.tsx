@@ -4,9 +4,9 @@ import { Container, NavBar, DashboardContent, SideBar } from "@/components";
 const DashboardLayout: React.FC = () => {
   return (
     <>
-      <section className="min-w-screen max-w-[1920px] relative md:px-[7%] md:py-[20px] flex lg:grid grid-cols-4 gap-[30px] justify-center items-center mx-auto overflow-hidden">
+      <section className="w-full h-full relative p-[1.302%] flex lg:grid grid-cols-4 gap-[30px] justify-center items-center mx-auto">
         {/* Side Nav Bar */}
-        <Container className="w-fit md:w-full h-full max-md:p-[4%] relative hidden md:inline-block">
+        <Container className="w-fit md:w-full h-full p-[1.302%] relative hidden md:inline-block">
           <SideBar />
         </Container>
         {/* Nav Bar and Dashboard Main Content */}

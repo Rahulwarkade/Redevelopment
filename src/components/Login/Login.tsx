@@ -147,13 +147,15 @@ const Login: React.FC = () => {
     try {
       // Resend login OTP
       const password = getValues("password");
-      const resultAction = await dispatch(signIn({ email: emailForOtp, password })).unwrap();
+      const resultAction = await dispatch(
+        signIn({ email: emailForOtp, password })
+      ).unwrap();
       if (resultAction?.success && resultAction?.email) {
-      toast.success("OTP resent to your email address");
-      setResendTimer(30);
-      setCanResend(false);
-      setOtpExpired(false);
-      setValue("otp", "");
+        toast.success("OTP resent to your email address");
+        setResendTimer(30);
+        setCanResend(false);
+        setOtpExpired(false);
+        setValue("otp", "");
       }
     } catch (error: unknown) {
       const errorMsg =
@@ -175,18 +177,56 @@ const Login: React.FC = () => {
   return (
     <>
       {
-        <section className="w-full relative flex flex-col gap-4">
+        <section className="w-full h-full relative flex px-[5%] gap-4">
+          {/* Logo and Illustration Images Container */}
+          <section className="w-full h-full relative ">
           {/* Logo */}
-          <Container className="w-full relative flex justify-center md:justify-start item-center ">
+          <Container className="w-full  mt-[4%] absolute">
             <span className="relative md:-translate-x-[45px]">
               <Image src={Logo.src} alt="logo" width={214} height={53} />
             </span>
           </Container>
-          <section className="w-full relative flex  gap-5">
+            {/* Illustration Images Container */}
+            <Container className="w-full max-md:max-w-[512px] min-h-[275px]  flex justify-between items-end mt-10  absolute bottom-0">
+              <Container className="hidden lg:flex w-[131px] h-[275px] relative">
+
+                <div className="min-w-[121px] min-h-[121px] bg-[#F5F5F5] rounded-full absolute -top-[50px]"/>
+                <div className="min-w-[40px] min-h-[40px] bg-[#F5F5F5] rounded-full absolute top-[70px]"/>
+              </Container>
+              {/* boy and Tree */}
+              <Container className="w-full relative flex items-end">
+                <Container className="absolute">
+                  <Image
+                    src={TreeIlustration.src}
+                    width={95}
+                    height={275}
+                    alt="tree"
+                  />
+                </Container>
+                <Container className="relative translate-x-[60px]">
+                  <Image
+                    src={BoyIlustration.src}
+                    width={207}
+                    height={211}
+                    alt="boy"
+                  />
+                </Container>
+              </Container>
+
+            <Container className="w-fit h-fit relative">
+            <div className="hidden lg:flex min-w-[121px] min-h-[121px] bg-[#F5F5F5] rounded-full absolute -left-[70px] -top-[80px]"/>
+                <Image
+                  src={PlantIlustration.src}
+                  width={113}
+                  height={162}
+                  alt="plant"
+                />
+            </Container>
+            </Container>
             {/* Login Container and Logo*/}
-            <Container className="w-full relative flex flex-col">
+            <Container className="w-full h-full relative flex flex-col mt-[20%] items-center">
               {/* Login Form Container */}
-              <Container className="w-full max-w-[512px] h-full relative  flex flex-col justify-center items-center ">
+              <Container className="w-full max-w-[512px]  relative  flex flex-col justify-center items-center ">
                 {/* Login Container */}
                 <Container className="w-full relative flex flex-col gap-4">
                   <Text
@@ -350,46 +390,16 @@ const Login: React.FC = () => {
                   </Container>
                 </form>
               </Container>
-
-              {/* Illustration Images Container */}
-              <Container className="w-full max-md:max-w-[512px] min-h-[275px] relative flex justify-between items-end mt-10 md:translate-y-[40px]">
-                {/* boy and Tree */}
-                <Container className="w-full relative flex items-end">
-                  <Container className="absolute">
-                    <Image
-                      src={TreeIlustration.src}
-                      width={95}
-                      height={275}
-                      alt="tree"
-                    />
-                  </Container>
-                  <Container className="relative translate-x-[60px]">
-                    <Image
-                      src={BoyIlustration.src}
-                      width={207}
-                      height={211}
-                      alt="boy"
-                    />
-                  </Container>
-                </Container>
-
-                <Image
-                  src={PlantIlustration.src}
-                  width={113}
-                  height={162}
-                  alt="plant"
-                />
-              </Container>
             </Container>
-
-            {/* Image Container */}
-            <Container className="hidden  md:flex w-full h-fit relative  bg-[#F0F0F0] rounded-[30px]  items-center justify-center">
+          </section>
+          {/* Image Container */}
+          <section className="hidden lg:flex w-full h-full relative justify-center items-center">
+            <Container className="max-w-[616px] max-h-[816px] w-fit bg-[#F0F0F0] rounded-[30px] flex justify-center items-center">
               <Image
                 src={LoginImg.src}
                 width={616}
                 height={800}
                 alt="login"
-                className="object-contain"
               />
             </Container>
           </section>

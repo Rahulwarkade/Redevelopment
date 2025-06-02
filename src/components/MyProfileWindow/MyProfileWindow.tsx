@@ -162,7 +162,7 @@ const MyProfileWindow = () => {
     };
 
     return (
-      <Container className="w-full h-full relative p-[30px] flex flex-col gap-[30px]">
+      <Container className="w-full h-full relative p-[30px] flex flex-col gap-[30px] overflow-auto">
         <Container className="w-full relative">
           <Text className="text-base md:text-2xl font-medium text-black">
             General Information
@@ -587,7 +587,7 @@ const MyProfileWindow = () => {
   };
 
   return (
-    <section className="w-full h-full bg-white_fdfdff rounded-[20px] border border-grey_e1e2ff overflow-hidden">
+    <section className="w-full  bg-white_fdfdff rounded-[20px] border border-grey_e1e2ff ">
       <Container className="border-b border-[#E1E2FF] px-[30px] py-4">
         <Text className="text-base md:text-2xl font-semibold text-black">
           Settings

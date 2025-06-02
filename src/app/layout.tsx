@@ -5,8 +5,8 @@ import ReduxProvider from "@/store/provider";
 import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
-  title: "Toneop Eats CRM",
-  description: "Toneop Eats CRM",
+  title: "Back Link Dashboard",
+  description: "Back Link Dashboard",
 };
 
 const RootLayout = ({
@@ -18,7 +18,9 @@ const RootLayout = ({
     <html lang="en" className={dmSans.variable}>
       <body className={`antialiased `}>
         <ReduxProvider>
-          {children}
+          <main>
+            {children}
+          </main>
           <ToastContainer position="top-right" autoClose={3000} />
         </ReduxProvider>
       </body>

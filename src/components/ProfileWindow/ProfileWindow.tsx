@@ -1,13 +1,15 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Button, Container, Image, Text } from "@/components";
 import { ProfileImage } from "@/assets/Images";
 import { Icons } from "@/assets/icons";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store";
 import { ApiResponse, IBanner, IUser } from "@/types/custom";
+import useIsDesktop from "../Hooks/useIsDesktop";
 
 const ProfileWindow: React.FC = () => {
+  const isDesktop = useIsDesktop();
   const profile = useAppSelector(
     (state: RootState) => state.user.profile
   ) as ApiResponse<IUser> | null;
@@ -19,10 +21,23 @@ const ProfileWindow: React.FC = () => {
   const address = "No address available"; // Placeholder
   const guidelines = user?.collaborationGuidelines || [];
   const banners: IBanner[] = user?.banners || [];
+  const bannersRef = useRef<HTMLDivElement | null>(null);
+  const scrollHandler = (direction : string) => {
+    if (direction == "left") {
+      if (bannersRef.current) {
+        bannersRef.current.scrollLeft -= 336;
+      }
+    } else {
+      if (bannersRef.current) {
+        bannersRef.current.scrollLeft += 320;
+      }
+    }
+  };
+
   return (
     <Container className="w-full h-full relative flex flex-col gap-[30px]">
       {/* Profile Header Section */}
-      <Container className="w-full relative rounded-[10px] bg-[#FFFFFF] drop-shadow-md backdrop-blur-md overflow-hidden">
+      <Container className="w-full relative rounded-[10px] bg-[#FFFFFF] drop-shadow-md backdrop-blur-md ">
         <Container className="w-full h-[80px] bg-gradient-to-r from-[#9181F4] to-[#5038ED] flex items-center justify-end px-4 md:px-[30px] absolute">
           <Button
             className="px-1 md:px-4 py-1 md:py-[10px] rounded-[4px] bg-[#FFFFFF] text-[#515DEF] text-xs md:text-base font-medium"
@@ -155,94 +170,122 @@ const ProfileWindow: React.FC = () => {
         </Container>
       </Container>
 
-      {/* Websites Placeholder Section */}
-      <Container className="w-full relative border border-[#E1E2FF] rounded-[20px] overflow-hidden bg-[#FDFDFF]">
+      {/* Websites Section */}
+      <Container className="w-full relative border border-[#E1E2FF] rounded-[20px] bg-[#FDFDFF]">
         <Container className="w-full relative px-4 md:px-[30px] py-4 border-b border-[#E1E2FF]">
           <Text className="text-base 2xl:text-2xl text-[#292929] font-semibold">
-            My Websites
+        My Websites
           </Text>
         </Container>
 
-        <Container className="w-full relative flex p-4 items-center gap-4">
+        <Container className="w-full relative flex flex-col md:flex-row items-center gap-4 p-4">
+          {/* Left Scroll Button */}
+          {isDesktop && (
+        <Button
+          type="button"
+          onClick={() => scrollHandler("left")}
+          className="hidden md:inline-block"
+        >
           <Image
             src={Icons.MoveLeft}
             alt="left"
             width={34}
             height={34}
-            className="hidden md:inline-block mx-auto"
+            className="mx-auto"
           />
+        </Button>
+          )}
 
-          <Container className="w-full relative items-center gap-4 grid md:grid-cols-2 xl:grid-cols-3">
-            {(banners && banners.length>0) ? 
-            (banners?.map((banner, index: number) => (
-              <Container
-                key={`website-${banner._id}-${index}`}
-                className="w-full min-w-max relative border rounded-[10px] border-[#E1E2FF]"
-              >
-                <Container className="w-full relative flex p-4 items-center gap-10">
-                  <span className="w-full flex gap-6 items-center">
-                    <span className="relative flex">
-                      <span className="size-[48px] bg-[#4C6FFF] rounded-full flex justify-center items-center">
-                        <Text className="text-[#FFFFFF] text-sm md:text-xl font-bold">
-                          {banner.name.slice(0, 2).toUpperCase() || "CH"}
-                        </Text>
-                      </span>
-                      <span className="absolute bottom-0 right-0 translate-x-2">
-                        <Image
-                          src={Icons.StarIcon}
-                          width={24}
-                          height={24}
-                          alt="star"
-                        />
-                      </span>
-                    </span>
-                    <span>
-                      <Text className="text-sm md:text-base font-semibold text-[#27272E]">
-                        {banner.websiteUrl}
-                      </Text>
-                      <Text className="text-xs md:text-sm text-[#425466]">
-                        DR: {banner.dr} | DA: {banner.da}
-                      </Text>
-                    </span>
-                  </span>
-                  <Image
-                    src={Icons.SquareRight}
-                    width={24}
-                    height={24}
-                    alt="right"
-                  />
-                </Container>
-
-                <Container className="w-full relative bg-[#EEF2FD] px-4 py-1 flex justify-between">
-                  <Text className="text-xs md:text-sm text-[#425466]">
-                    Traffic:{" "}
-                    <span className="font-semibold">
-                      {banner.trafficValue}
-                      {banner.trafficUnit === "6823d16e81a262e2bca6a4c8"
-                        ? "K/month"
-                        : ""}
-                    </span>
-                  </Text>
-                  <Text className="text-xs md:text-sm text-[#425466]">
-                    Category:{" "}
-                    <span className="font-semibold">
-                      {banner.category?.name || "N/A"}
-                    </span>
-                  </Text>
-                </Container>
-              </Container>
-            ))) : (<Text className="text-sm md:text-base text-[#787774]">
-                No Websites have been added.
-              </Text>)}
+          {/* Websites List */}
+          <section
+        ref={bannersRef}
+        className={`hidescroller w-full overflow-x-scroll scroll-smooth relative flex ${
+          isDesktop ? "gap-4" : "flex-col"
+        }`}
+          >
+        {banners && banners.length > 0 ? (
+          banners.map((banner, index: number) => (
+            <Container
+          key={`website-${banner._id}-${index}`}
+          className={`relative border rounded-[10px] border-[#E1E2FF] ${
+            isDesktop ? "min-w-[300px]" : "w-full mb-4"
+          }`}
+            >
+          <Container className="w-full relative flex p-4 items-center gap-4">
+            <span className="flex gap-4 items-center">
+              <span className="relative flex">
+            <span className="size-[48px] bg-[#4C6FFF] rounded-full flex justify-center items-center">
+              <Text className="text-[#FFFFFF] text-sm md:text-xl font-bold">
+                {banner.name.slice(0, 2).toUpperCase() || "CH"}
+              </Text>
+            </span>
+            <span className="absolute bottom-0 right-0 translate-x-2">
+              <Image
+                src={Icons.StarIcon}
+                width={24}
+                height={24}
+                alt="star"
+              />
+            </span>
+              </span>
+              <span>
+            <Text className="text-sm md:text-base font-semibold text-[#27272E] break-all line-clamp-1">
+              {banner.websiteUrl}
+            </Text>
+            <Text className="text-xs md:text-sm text-[#425466]">
+              DR: {banner.dr} | DA: {banner.da}
+            </Text>
+              </span>
+            </span>
+            <Image
+              src={Icons.SquareRight}
+              width={24}
+              height={24}
+              alt="right"
+            />
           </Container>
 
+          <Container className="w-full h-full relative bg-[#EEF2FD] px-4 py-1 flex justify-between">
+            <Text className="text-xs md:text-sm text-[#425466]">
+              Traffic:{" "}
+              <span className="font-semibold">
+            {banner.trafficValue}
+            {banner.trafficUnit === "6823d16e81a262e2bca6a4c8"
+              ? "K/month"
+              : ""}
+              </span>
+            </Text>
+            <Text className="text-xs md:text-sm text-[#425466]">
+              Category:{" "}
+              <span className="font-semibold">
+            {banner.category?.name || "N/A"}
+              </span>
+            </Text>
+          </Container>
+            </Container>
+          ))
+        ) : (
+          <Text className="text-sm md:text-base text-[#787774]">
+            No Websites have been added.
+          </Text>
+        )}
+          </section>
+
+          {/* Right Scroll Button */}
+          {isDesktop && (
+        <Button
+          type="button"
+          onClick={() => scrollHandler("right")}
+          className="hidden md:inline-block"
+        >
           <Image
             src={Icons.MoveRight}
             alt="right"
             width={34}
             height={34}
-            className="hidden md:inline-block"
           />
+        </Button>
+          )}
         </Container>
       </Container>
     </Container>

@@ -89,7 +89,7 @@ const AddBanner: React.FC<{
       .split("; ")
       .find((row) => row.startsWith("authToken="))
       ?.split("=")[1];
-    dispatch(getCategories(tempToken || ""))
+    dispatch(getCategories())
       .unwrap()
       .then((categories: Category[]) => {
         setCategories(categories);

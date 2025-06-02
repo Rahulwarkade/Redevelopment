@@ -89,7 +89,7 @@ const CountrySelect: React.FC<Props> = ({ value, onChange,disabled }) => {
 
   return (
     <section
-      className="relative w-full h-[56px] translate-y-5 z-50"
+      className="relative w-full h-[56px] translate-y-5 z-40"
       ref={dropdownRef}
     >
       <button

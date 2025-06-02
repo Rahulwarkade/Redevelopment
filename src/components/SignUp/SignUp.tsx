@@ -110,8 +110,8 @@ const SignUp: React.FC = () => {
         document.cookie = `authToken=${resultAction.token}; path=/;`;
       }
       reset();
-      if(resultAction.success)
-      {
+      if (resultAction.success) {
+        toast.success("Account created successfully!");
         router.replace("/");
       }
 
@@ -153,8 +153,8 @@ const SignUp: React.FC = () => {
               >
                 Sign up
               </Text>
-              <Text className="text-sm md:text-base  text-black_313131 text-center md:text-start">
-                Let{"'"}s get you all st up so you can access your personal
+              <Text className="hidden md:flex text-sm md:text-base  text-black_313131 text-center md:text-start">
+                Let{"'"}s get you all setup so you can access your personal
                 account.
               </Text>
             </Container>
@@ -179,7 +179,7 @@ const SignUp: React.FC = () => {
                     error={
                       errors?.name?.message ? String(errors?.name?.message) : ""
                     }
-                    errorClassName="text-red-500 text-sm pl-6"
+                    errorClassName="text-red-500 text-sm "
                   />
 
                   {/* Email Input */}
@@ -204,11 +204,13 @@ const SignUp: React.FC = () => {
                         ? String(errors?.email?.message)
                         : ""
                     }
-                    errorClassName="text-red-500 text-sm pl-6"
+                    errorClassName="text-red-500 text-sm"
                   />
                   {/* Country Select and Number Input */}
                   <Container className="w-full relative flex  gap-6 items-center">
-                    <CountrySelect value={selectedCountry} onChange={setSelectedCountry} />
+                    <Container className="w-fit">
+                      <CountrySelect value={selectedCountry} onChange={setSelectedCountry} />
+                    </Container>
                     <Input
                       placeholder="e.g. 98765 43210"
                       containerClassName="w-full relative flex flex-col h-[56px] before:content-['Phone_Number'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
@@ -223,11 +225,11 @@ const SignUp: React.FC = () => {
                       maxLength={10}
                       onKeyPress={handleKeyPress}
                       error={errors?.number?.message ? String(errors?.number?.message) : ""}
-                      errorClassName="text-red-500 text-sm pl-6"
+                      errorClassName="text-red-500 text-sm "
                     />
                   </Container>
                   {/* Password and Confirm Password Input */}
-                  <Container className="w-full relative flex gap-6">
+                  <Container className="w-full relative flex gap-6 max-md:flex-col">
                     <Input
                       placeholder="********"
                       containerClassName="w-full relative flex flex-col h-[56px] before:content-['Password'] before:w-fit before:bg-white before:z-10 before:translate-y-[60%] before:translate-x-4 before:text-sm before:text-black_1C1B1F "
@@ -244,7 +246,7 @@ const SignUp: React.FC = () => {
                           ? String(errors?.password?.message)
                           : ""
                       }
-                      errorClassName="text-red-500 text-sm pl-6 text-nowrap"
+                      errorClassName="text-red-500 text-sm text-nowrap"
                     />
                     <Input
                       placeholder="********"
@@ -263,7 +265,7 @@ const SignUp: React.FC = () => {
                           ? String(errors?.confirmPassword?.message)
                           : ""
                       }
-                      errorClassName="text-red-500 text-sm pl-6 text-nowrap"
+                      errorClassName="text-red-500 text-sm text-nowrap"
                     />
                   </Container>
                   {/* Terms and Privacy Policy Container */}

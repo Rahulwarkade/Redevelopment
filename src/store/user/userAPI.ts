@@ -286,14 +286,9 @@ export const addBanner = createAsyncThunk(
 
 export const getCategories = createAsyncThunk(
   "category/getCategories",
-  async (token : string, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("categories/",        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const response = await axiosInstance.get("categories/");
       if (response.status !== 200) {
         return rejectWithValue(response.data?.message || "Failed to fetch categories");
       }
@@ -354,7 +349,7 @@ export const getBanners = createAsyncThunk(
       if (response.status !== 200) {
         return rejectWithValue(response.data?.message || "Failed to fetch banners");
       }
-      return response.data.banners; // Adjust if your API response structure is different
+      return response.data; // Adjust if your API response structure is different
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
         // @ts-expect-error axios error.response is not in TS type but present at runtime

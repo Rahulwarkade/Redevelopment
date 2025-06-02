@@ -49,7 +49,7 @@ const SideBar: React.FC<NavBarType> = ({isSidebar, setIsSidebar, isNavBar}) => {
 
   return (
     <>
-      <Container className={`w-full max-md:max-w-[430px] h-full fixed md:relative  max-md:z-50 rounded-[10px] lg:rounded-[20px] bg-gray_f9f9f9 p-5 transition-transform duration-300 ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${isNavBar &&"md:hidden"} ${isSidebar ? "max-md:translate-x-0" : "max-md:-translate-x-full"}`}>
+      <Container className={`w-full h-full max-md:max-w-[430px] fixed md:relative  max-md:z-50 rounded-[10px] lg:rounded-[20px] bg-gray_f9f9f9 p-5 transition-transform duration-300 ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${isNavBar &&"md:hidden"} ${isSidebar ? "max-md:translate-x-0" : "max-md:-translate-x-full"}`}>
         
         {/* Logo Container */}
         <Container className="w-full relative flex items-center justify-between md:justify-center">
