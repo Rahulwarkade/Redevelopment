@@ -244,7 +244,7 @@ const SignUp: React.FC = () => {
                           ? String(errors?.password?.message)
                           : ""
                       }
-                      errorClassName="text-red-500 text-sm pl-6"
+                      errorClassName="text-red-500 text-sm pl-6 text-nowrap"
                     />
                     <Input
                       placeholder="********"
@@ -263,7 +263,7 @@ const SignUp: React.FC = () => {
                           ? String(errors?.confirmPassword?.message)
                           : ""
                       }
-                      errorClassName="text-red-500 text-sm pl-6"
+                      errorClassName="text-red-500 text-sm pl-6 text-nowrap"
                     />
                   </Container>
                   {/* Terms and Privacy Policy Container */}

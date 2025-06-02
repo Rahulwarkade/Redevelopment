@@ -221,7 +221,7 @@ const MyProfileWindow = () => {
                     placeholder="123456789"
                     containerClassName="w-full"
                     className="w-full h-[60px] rounded-[6px] border border-[#DEDEDE]"
-                    readOnly={!isEditing}
+                    readOnly={true}
                     {...register("phoneNumber", {
                       required: "Phone number is required.",
                       pattern: {

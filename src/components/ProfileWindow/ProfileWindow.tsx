@@ -177,7 +177,7 @@ const ProfileWindow: React.FC = () => {
             (banners?.map((banner, index: number) => (
               <Container
                 key={`website-${banner._id}-${index}`}
-                className="w-full relative border rounded-[10px] border-[#E1E2FF]"
+                className="w-full min-w-max relative border rounded-[10px] border-[#E1E2FF]"
               >
                 <Container className="w-full relative flex p-4 items-center gap-10">
                   <span className="w-full flex gap-6 items-center">
